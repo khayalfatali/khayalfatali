@@ -18,16 +18,15 @@ export function TapToPayScreen({ merchant = "Coffee Moffie LLC", amount = "$10.0
       {/* Glow ring */}
       <motion.div
         aria-hidden
-        className="absolute left-1/2 top-[32%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        className="absolute left-1/2 top-[32%] -translate-x-1/2 -translate-y-1/2 rounded-full will-change-transform"
         style={{
           width: 360,
           height: 360,
           background:
             "radial-gradient(closest-side, rgba(10,132,255,0.35), rgba(10,132,255,0) 70%)",
-          filter: "blur(8px)",
         }}
-        animate={{ scale: [1, 1.1, 1] }}
-        transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
+        animate={{ scale: [1, 1.08, 1] }}
+        transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
       />
 
       <div className="relative z-10 flex h-full flex-col items-center">

@@ -127,10 +127,10 @@ export function Thesis() {
                     <motion.div
                       key={index}
                       className="absolute inset-0"
-                      initial={{ opacity: 0, scale: 1.02, filter: "blur(8px)" }}
-                      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                      exit={{ opacity: 0, scale: 0.98, filter: "blur(6px)" }}
-                      transition={{ duration: 0.6, ease: [0.22, 0.8, 0.2, 1] }}
+                      initial={{ opacity: 0, y: 14 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.45, ease: [0.22, 0.8, 0.2, 1] }}
                     >
                       {screen}
                     </motion.div>

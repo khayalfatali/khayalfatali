@@ -1,9 +1,13 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { PhoneFrame } from "../phone/PhoneFrame";
-import { KeypadScreen } from "../phone/screens/Keypad";
 import { useRef } from "react";
+import dynamic from "next/dynamic";
+
+const HeroScene = dynamic(() => import("../three/HeroScene"), {
+  ssr: false,
+  loading: () => null,
+});
 
 const line1 = ["Merchant", "infrastructure,"];
 const line2 = ["redesigned", "for", "mobile."];
@@ -14,26 +18,30 @@ export function Hero() {
     target: ref,
     offset: ["start start", "end start"],
   });
-  const phoneY = useTransform(scrollYProgress, [0, 1], [0, -120]);
-  const phoneScale = useTransform(scrollYProgress, [0, 1], [1, 0.92]);
-  const textY = useTransform(scrollYProgress, [0, 1], [0, -60]);
-  const fade = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const textY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const sceneY = useTransform(scrollYProgress, [0, 1], [0, -40]);
+  const fade = useTransform(scrollYProgress, [0, 0.85], [1, 0]);
 
   return (
     <section
       ref={ref}
       className="relative flex min-h-[100svh] items-center justify-center overflow-hidden"
     >
-      {/* Aurora background */}
-      <div className="pointer-events-none absolute inset-0 aurora" />
-      {/* Gradient vignette */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(80% 60% at 50% 100%, rgba(0,0,0,0.9), transparent 60%), radial-gradient(70% 50% at 50% 0%, rgba(0,0,0,0.9), transparent 60%)",
-        }}
-      />
+      {/* 3D scene fills the section */}
+      <motion.div
+        style={{ y: sceneY, opacity: fade }}
+        className="pointer-events-none absolute inset-0 z-0"
+      >
+        <HeroScene />
+        {/* top/bottom fades to blend with next sections */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.0) 60%, rgba(0,0,0,0.7) 92%, #000 100%), radial-gradient(60% 40% at 50% 35%, rgba(10,132,255,0.08), transparent 70%)",
+          }}
+        />
+      </motion.div>
 
       <motion.div
         style={{ y: textY, opacity: fade }}
@@ -45,11 +53,11 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 0.1 }}
           className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11.5px] uppercase tracking-[0.14em] text-white/70 backdrop-blur"
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-[#0a84ff] shadow-[0_0_10px_#0a84ff]" />
+          <span className="h-1.5 w-1.5 rounded-full bg-white shadow-[0_0_10px_#fff]" />
           A new merchant operating system
         </motion.div>
 
-        <h1 className="text-display-tight text-balance text-[14vw] font-semibold leading-[0.9] tracking-[-0.045em] text-white sm:text-[9vw] lg:text-[7.2vw]">
+        <h1 className="text-display-tight text-balance text-[12vw] font-semibold leading-[0.9] tracking-[-0.045em] text-white sm:text-[8.5vw] lg:text-[6.8vw]">
           <WordsLine words={line1} delay={0.15} />
           <br />
           <WordsLine words={line2} delay={0.45} faint />
@@ -86,24 +94,6 @@ export function Hero() {
         </motion.div>
       </motion.div>
 
-      {/* Floating phone */}
-      <motion.div
-        style={{ y: phoneY, scale: phoneScale }}
-        className="relative z-20 mx-auto -mt-4 flex w-full justify-center"
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 80, rotateX: 18, scale: 0.92 }}
-          animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
-          transition={{ duration: 1.3, delay: 0.3, ease: [0.22, 0.8, 0.2, 1] }}
-          className="perspective-1200"
-        >
-          <PhoneFrame width={300}>
-            <KeypadScreen amount="$10.00" />
-          </PhoneFrame>
-        </motion.div>
-      </motion.div>
-
-      {/* Scroll cue */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
