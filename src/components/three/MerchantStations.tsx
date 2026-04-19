@@ -1,10 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { Character } from "./Character";
+import { Character, WalkingFigure } from "./Character";
 import { PhoneProp, CardProp } from "./PhoneProp";
 import { BillProp, Car, House, PineTree } from "./Environment";
-import { WalkingFigure } from "./Character";
 
 const BODY = "#2a2a2a";
 const BODY_LIGHT = "#3a3a3a";
@@ -16,14 +15,16 @@ function M({ color = BODY, flat = true }: { color?: string; flat?: boolean }) {
 }
 
 /**
- * COFFEE / HERO SCENE
- *
- * Matches the reference image:
- *  - Merchant (with apron) on the left, holding glowing phone slightly forward.
- *  - Customer on the right, reaching out with cash/bill.
- *  - Small wooden house in the background (left).
- *  - Pickup truck with a walking figure heading to it (right).
- *  - Foreground pine tree just to camera-right, midground trees behind.
+ * ---------------------------------------------------------------------------
+ * COFFEE / HERO SCENE  — matches the reference image.
+ * ---------------------------------------------------------------------------
+ * Composition (all world coords, origin at station x=0):
+ *   • Merchant in apron at (-0.38, 0, 0.05), gently rotated toward customer.
+ *   • Customer at (+0.5, 0, 0.1), turned 3/4 away from camera (we see back +
+ *     side of face), extending right arm with a banknote toward the phone.
+ *   • Glowing iPhone held at merchant's chest area — single light source.
+ *   • Background: wooden house (left), pickup + walking figure (right).
+ *   • Midground: three anchor pines forming a triangular silhouette band.
  */
 export function CoffeeStation({
   position = [0, 0, 0] as [number, number, number],
@@ -34,73 +35,65 @@ export function CoffeeStation({
 }) {
   return (
     <group position={position}>
-      {/* Merchant (apron) */}
+      {/* Merchant (apron, holding phone) */}
       <Character
-        position={[-0.55, 0, 0]}
-        rotation={0.45}
-        handForward="right"
-        otherHand="pocket"
-        variant={1}
+        position={[-0.38, 0, 0.05]}
+        rotation={0.18}
+        pose="hold_phone"
         apron
-        shirt="#6a6a6a"
+        variant={1}
+        shirt="#686868"
         pants="#2a2a2a"
         skin="#8e8e8e"
         hair="#181818"
       />
-      {/* Glowing phone in merchant's hand */}
+      {/* The glowing phone in merchant's hand (between-them) */}
       <PhoneProp
-        position={[-0.15, 1.1, 0.55]}
-        rotation={[-0.45, 0.35, 0]}
-        scale={1.15}
-        pulse={pulse * 1.1}
-      />
-
-      {/* Customer (darker jacket, lighter tone — looking at merchant) */}
-      <Character
-        position={[0.85, 0, 0.6]}
-        rotation={-Math.PI + 0.35}
-        handForward="left"
-        extendForward
-        variant={2}
-        shirt="#3d3d3d"
-        pants="#222"
-        skin="#7a7a7a"
-        hair="#1a1a1a"
-      />
-      {/* Customer extending a bill toward the phone */}
-      <BillProp
-        position={[0.35, 1.15, 0.55]}
-        rotation={[-0.35, -0.25, 0]}
+        position={[-0.08, 1.14, 0.38]}
+        rotation={[-0.55, 0.25, 0.1]}
         scale={1.2}
+        pulse={pulse * 1.15}
       />
 
-      {/* House in left background */}
-      <House position={[-6.2, 0, -2.4]} rotation={0.45} scale={1.15} />
-
-      {/* Pickup truck on right background with walking figure */}
-      <Car position={[5.8, 0, -1.6]} rotation={-0.2} scale={1.1} />
-      <WalkingFigure
-        position={[5.0, 0, -1.2]}
-        rotation={-0.3}
-        speed={0.3}
-        stride={0.2}
+      {/* Customer — 3/4 back to camera, right arm extended with bill */}
+      <Character
+        position={[0.5, 0, 0.1]}
+        rotation={Math.PI - 0.25}
+        pose="offer_right"
+        variant={2}
+        shirt="#3b3b3b"
+        pants="#1f1f1f"
+        skin="#7e7e7e"
+        hair="#181818"
+      />
+      <BillProp
+        position={[0.1, 1.18, 0.3]}
+        rotation={[-0.3, 0.2, 0]}
+        scale={1.15}
       />
 
-      {/* Large foreground pine tree (camera-right corner) */}
-      <PineTree position={[2.8, 0, 2.4]} scale={1.8} rotationY={0.6} tone={0} />
-      {/* Backdrop pine clusters */}
-      <PineTree position={[-2.8, 0, -1.0]} scale={1.4} rotationY={0.3} tone={1} />
-      <PineTree position={[-4.0, 0, -0.4]} scale={1.2} rotationY={1.2} tone={0} />
-      <PineTree position={[3.5, 0, -2.5]} scale={1.3} rotationY={-0.4} tone={1} />
-      <PineTree position={[-0.4, 0, -3.0]} scale={1.1} rotationY={0.8} tone={0} />
+      {/* House — left background */}
+      <House position={[-6.0, 0, -2.6]} rotation={0.55} scale={1.2} />
+
+      {/* Pickup + walking figure — right background */}
+      <Car position={[5.5, 0, -1.3]} rotation={-0.3} scale={1.1} />
+      <WalkingFigure position={[4.4, 0, -0.9]} rotation={-0.45} speed={0.3} stride={0.2} />
+
+      {/* Anchor pine trees — the one near-camera-right frames the shot */}
+      <PineTree position={[2.9, 0, 2.6]} scale={1.9} rotationY={0.5} tone={0} />
+      <PineTree position={[-2.4, 0, -0.6]} scale={1.5} rotationY={0.3} tone={1} />
+      <PineTree position={[-4.0, 0, -0.8]} scale={1.3} rotationY={1.1} tone={0} />
+      <PineTree position={[-1.0, 0, -2.4]} scale={1.2} rotationY={0.7} tone={1} />
+      <PineTree position={[3.4, 0, -2.2]} scale={1.4} rotationY={-0.4} tone={1} />
+      <PineTree position={[1.3, 0, -3.0]} scale={1.1} rotationY={0.2} tone={0} />
     </group>
   );
 }
 
 /**
- * CLOTHING STATION
- *  - Outdoor market stall w/ rack of clothes.
- *  - Merchant accepting payment via customer's Apple Pay phone.
+ * ---------------------------------------------------------------------------
+ * CLOTHING STORE — outdoor market stall. Customer pays via Apple Pay.
+ * ---------------------------------------------------------------------------
  */
 export function ClothingStation({
   position = [0, 0, 0] as [number, number, number],
@@ -111,67 +104,62 @@ export function ClothingStation({
 }) {
   return (
     <group position={position}>
-      {/* Back awning / stall frame */}
-      <mesh position={[0, 2.6, -1.4]} castShadow>
-        <boxGeometry args={[3.8, 0.15, 1.8]} />
+      {/* Awning */}
+      <mesh position={[0, 2.8, -1.2]} castShadow>
+        <boxGeometry args={[4.2, 0.16, 2.0]} />
         <M color={EDGE} />
       </mesh>
-      {/* Awning posts */}
-      {[-1.7, 1.7].map((x, i) => (
-        <mesh key={i} position={[x, 1.3, -0.6]} castShadow>
-          <boxGeometry args={[0.08, 2.6, 0.08]} />
+      {[-1.9, 1.9].map((x, i) => (
+        <mesh key={i} position={[x, 1.4, -0.4]} castShadow>
+          <boxGeometry args={[0.1, 2.8, 0.1]} />
           <M color={EDGE} />
         </mesh>
       ))}
 
-      {/* Racks */}
-      <ClothingRack position={[-1.3, 0, -0.9]} />
-      <ClothingRack position={[1.2, 0, -0.9]} rotation={-0.2} />
+      {/* Clothing racks on either side */}
+      <ClothingRack position={[-1.6, 0, -0.5]} />
+      <ClothingRack position={[1.6, 0, -0.5]} rotation={-0.12} />
 
-      {/* Counter */}
-      <Counter width={1.8} depth={0.7} />
-
-      {/* Merchant behind counter */}
+      {/* Merchant (apron, holds phone) */}
       <Character
-        position={[-0.25, 0, -0.25]}
-        rotation={Math.PI + 0.1}
-        handForward="right"
-        otherHand="pocket"
+        position={[-0.38, 0, 0.05]}
+        rotation={0.18}
+        pose="hold_phone"
         apron
         variant={3}
-        shirt="#606060"
+        shirt="#616161"
         pants="#262626"
         skin="#8a8a8a"
       />
       <PhoneProp
-        position={[0.1, 1.12, 0.4]}
-        rotation={[-0.35, Math.PI - 0.15, 0]}
-        scale={1.05}
-        pulse={pulse}
+        position={[-0.08, 1.14, 0.38]}
+        rotation={[-0.55, 0.25, 0.1]}
+        scale={1.2}
+        pulse={pulse * 1.1}
       />
 
-      {/* Customer with Apple Pay phone */}
+      {/* Customer — offering their own phone (Apple Pay tap) */}
       <Character
-        position={[0.6, 0, 1.4]}
-        rotation={0.15}
-        handForward="right"
-        extendForward
+        position={[0.5, 0, 0.1]}
+        rotation={Math.PI - 0.25}
+        pose="offer_right"
         variant={4}
         shirt="#3a3a3a"
         pants="#1f1f1f"
-        skin="#7c7c7c"
+        skin="#7b7b7b"
       />
       <PhoneProp
-        position={[0.85, 1.15, 0.7]}
-        rotation={[-0.55, 0.2, 0]}
+        position={[0.12, 1.18, 0.3]}
+        rotation={[-0.4, 0.35, 0]}
         scale={0.95}
-        pulse={pulse * 0.75}
+        pulse={pulse * 0.65}
       />
 
-      {/* Environment accents */}
-      <PineTree position={[-4.5, 0, -3.2]} scale={1.3} rotationY={0.4} tone={0} />
-      <PineTree position={[4.5, 0, -2.8]} scale={1.5} rotationY={1.2} tone={1} />
-      <PineTree position={[3.2, 0, 2.6]} scale={1.4} rotationY={0.2} tone={0} />
+      {/* Bg framing */}
+      <PineTree position={[-4.6, 0, -2.8]} scale={1.4} rotationY={0.4} tone={0} />
+      <PineTree position={[4.3, 0, -2.4]} scale={1.5} rotationY={1.2} tone={1} />
+      <PineTree position={[3.3, 0, 2.6]} scale={1.5} rotationY={0.2} tone={0} />
+      <House position={[-5.6, 0, -2.8]} rotation={0.7} scale={1.05} />
     </group>
   );
 }
@@ -220,23 +208,10 @@ function ClothingRack({
   );
 }
 
-function Counter({ width = 2.2, depth = 0.9 }: { width?: number; depth?: number }) {
-  return (
-    <>
-      <mesh position={[0, 0.95, 0]} castShadow receiveShadow>
-        <boxGeometry args={[width, 0.08, depth]} />
-        <M color={BODY_LIGHT} />
-      </mesh>
-      <mesh position={[0, 0.45, 0]} castShadow receiveShadow>
-        <boxGeometry args={[width, 0.9, depth]} />
-        <M color={BODY} />
-      </mesh>
-    </>
-  );
-}
-
 /**
- * FRUIT STAND — outdoor crates.
+ * ---------------------------------------------------------------------------
+ * FRUIT STAND (manav) — outdoor wooden crates. Customer pays via Google Pay.
+ * ---------------------------------------------------------------------------
  */
 export function FruitStation({
   position = [0, 0, 0] as [number, number, number],
@@ -247,31 +222,29 @@ export function FruitStation({
 }) {
   return (
     <group position={position}>
-      {/* Stall canopy */}
-      <mesh position={[0, 2.8, -0.3]} rotation={[0.18, 0, 0]} castShadow>
-        <boxGeometry args={[3.4, 0.08, 1.8]} />
+      {/* Canopy */}
+      <mesh position={[0, 2.9, -0.5]} rotation={[0.14, 0, 0]} castShadow>
+        <boxGeometry args={[3.6, 0.08, 1.9]} />
         <M color={BODY_LIGHT} />
       </mesh>
-      {[-1.5, 1.5].map((x, i) => (
-        <mesh key={i} position={[x, 1.4, -0.3]} castShadow>
-          <boxGeometry args={[0.08, 2.8, 0.08]} />
+      {[-1.7, 1.7].map((x, i) => (
+        <mesh key={i} position={[x, 1.5, -0.5]} castShadow>
+          <boxGeometry args={[0.08, 3.0, 0.08]} />
           <M color={EDGE} />
         </mesh>
       ))}
 
-      {/* Crate stacks */}
-      <FruitCrate position={[-0.9, 0.2, 0.0]} />
-      <FruitCrate position={[0.0, 0.2, 0.0]} />
-      <FruitCrate position={[0.9, 0.2, 0.0]} />
-      <FruitCrate position={[-0.45, 0.62, 0.0]} small />
-      <FruitCrate position={[0.45, 0.62, 0.0]} small />
+      {/* Crate stacks — bit offset so the characters still read */}
+      <FruitCrate position={[-2.0, 0.2, -0.1]} />
+      <FruitCrate position={[-2.0, 0.62, -0.1]} small />
+      <FruitCrate position={[2.0, 0.2, -0.1]} />
+      <FruitCrate position={[2.0, 0.62, -0.1]} small />
 
-      {/* Merchant leaning from the back */}
+      {/* Merchant */}
       <Character
-        position={[-0.3, 0, -0.9]}
-        rotation={Math.PI - 0.1}
-        handForward="right"
-        otherHand="pocket"
+        position={[-0.38, 0, 0.05]}
+        rotation={0.18}
+        pose="hold_phone"
         apron
         variant={5}
         shirt="#5a5a5a"
@@ -279,34 +252,36 @@ export function FruitStation({
         skin="#8a8a8a"
       />
       <PhoneProp
-        position={[-0.05, 1.1, -0.35]}
-        rotation={[-0.35, Math.PI, 0]}
-        scale={1.1}
-        pulse={pulse}
+        position={[-0.08, 1.14, 0.38]}
+        rotation={[-0.55, 0.25, 0.1]}
+        scale={1.2}
+        pulse={pulse * 1.05}
       />
 
-      {/* Customer with Google Pay phone */}
+      {/* Customer offering their phone (Google Pay) */}
       <Character
-        position={[0.7, 0, 1.4]}
-        rotation={0.1}
-        handForward="right"
-        extendForward
+        position={[0.5, 0, 0.1]}
+        rotation={Math.PI - 0.25}
+        pose="offer_right"
         variant={6}
         shirt="#3c3c3c"
         pants="#1e1e1e"
         skin="#7a7a7a"
       />
       <PhoneProp
-        position={[0.9, 1.1, 0.7]}
-        rotation={[-0.5, 0.1, 0]}
+        position={[0.12, 1.18, 0.3]}
+        rotation={[-0.4, 0.35, 0]}
         scale={0.95}
-        pulse={pulse * 0.75}
+        pulse={pulse * 0.65}
       />
+
+      {/* Small crate with produce on counter line */}
+      <FruitCrate position={[0.05, 0.18, 0.9]} small />
 
       {/* Trees */}
       <PineTree position={[-4.8, 0, -2.5]} scale={1.5} rotationY={0.4} tone={0} />
       <PineTree position={[4.6, 0, -2.2]} scale={1.4} rotationY={1.0} tone={1} />
-      <PineTree position={[-3.2, 0, 2.4]} scale={1.6} rotationY={0.2} tone={0} />
+      <PineTree position={[-3.4, 0, 2.6]} scale={1.6} rotationY={0.2} tone={0} />
     </group>
   );
 }
@@ -351,7 +326,9 @@ function FruitCrate({
 }
 
 /**
- * FLORIST — small indoor setup w/ flower buckets.
+ * ---------------------------------------------------------------------------
+ * FLORIST — small shop w/ flower buckets. Customer pays by physical card.
+ * ---------------------------------------------------------------------------
  */
 export function FloristStation({
   position = [0, 0, 0] as [number, number, number],
@@ -362,28 +339,26 @@ export function FloristStation({
 }) {
   return (
     <group position={position}>
-      {/* Small shop silhouette */}
+      {/* Shop wall */}
       <mesh position={[0, 1.8, -1.3]} castShadow>
         <boxGeometry args={[3.6, 3.6, 0.15]} />
         <M color={BODY} />
       </mesh>
-      <mesh position={[0, 3.7, -1.0]} castShadow>
+      <mesh position={[0, 3.7, -1.1]} castShadow>
         <coneGeometry args={[2.3, 0.9, 4]} />
         <M color={EDGE} />
       </mesh>
 
-      {[-1.2, -0.6, 0.6, 1.2].map((x, i) => (
-        <FlowerBucket key={i} position={[x, 0, -0.6]} variant={i} />
+      {/* Flower buckets lining the background */}
+      {[-1.4, -0.8, 0.8, 1.4].map((x, i) => (
+        <FlowerBucket key={i} position={[x, 0, -0.7]} variant={i} />
       ))}
 
-      <Counter width={2.2} depth={0.7} />
-      <Bouquet position={[-0.4, 1.0, 0.05]} />
-
+      {/* Merchant */}
       <Character
-        position={[0.3, 0, -0.2]}
-        rotation={Math.PI + 0.08}
-        handForward="right"
-        otherHand="pocket"
+        position={[-0.38, 0, 0.05]}
+        rotation={0.18}
+        pose="hold_phone"
         apron
         variant={7}
         shirt="#606060"
@@ -391,27 +366,29 @@ export function FloristStation({
         skin="#8c8c8c"
       />
       <PhoneProp
-        position={[0.55, 1.12, 0.4]}
-        rotation={[-0.3, Math.PI - 0.1, 0]}
-        scale={1.1}
-        pulse={pulse}
+        position={[-0.08, 1.14, 0.38]}
+        rotation={[-0.55, 0.25, 0.1]}
+        scale={1.2}
+        pulse={pulse * 1.1}
       />
 
+      {/* Customer — physical card */}
       <Character
-        position={[0.55, 0, 1.3]}
-        rotation={0.1}
-        handForward="right"
-        extendForward
+        position={[0.5, 0, 0.1]}
+        rotation={Math.PI - 0.25}
+        pose="offer_right"
         variant={8}
         shirt="#3e3e3e"
         pants="#1d1d1d"
         skin="#7a7a7a"
       />
-      <CardProp position={[0.85, 1.18, 0.65]} rotation={[-0.5, 0.1, 0]} />
+      <CardProp position={[0.15, 1.18, 0.3]} rotation={[-0.4, 0.3, 0]} />
 
-      <PineTree position={[-4.5, 0, -2.6]} scale={1.4} rotationY={0.6} tone={0} />
+      {/* Trees */}
+      <PineTree position={[-4.4, 0, -2.6]} scale={1.4} rotationY={0.6} tone={0} />
       <PineTree position={[4.2, 0, -2.0]} scale={1.3} rotationY={-0.4} tone={1} />
       <PineTree position={[3.6, 0, 2.6]} scale={1.5} rotationY={0.2} tone={0} />
+      <PineTree position={[-3.4, 0, 2.8]} scale={1.3} rotationY={0.1} tone={1} />
     </group>
   );
 }
@@ -458,31 +435,10 @@ function FlowerBucket({
   );
 }
 
-function Bouquet({ position }: { position: [number, number, number] }) {
-  return (
-    <group position={position} rotation={[-0.2, 0.3, 0.1]}>
-      <mesh castShadow>
-        <coneGeometry args={[0.18, 0.35, 8]} />
-        <M color={BODY_LIGHT} />
-      </mesh>
-      {[
-        [-0.05, 0.2, 0.02],
-        [0.04, 0.22, -0.03],
-        [0.06, 0.18, 0.05],
-        [-0.03, 0.17, -0.06],
-      ].map((p, i) => (
-        <mesh key={i} position={p as [number, number, number]} castShadow>
-          <icosahedronGeometry args={[0.05, 0]} />
-          <M color={BODY_BRIGHT} flat={false} />
-        </mesh>
-      ))}
-    </group>
-  );
-}
-
 /**
- * Lights tuned for the reference: soft warm key from upper-right, weak fill,
- * near-black ambient.
+ * Lights tuned to match the reference: a key from upper-right creating the
+ * main character highlight + soft back/rim fill, and the phone itself casting
+ * a local white point light on the merchant's chest.
  */
 export function SceneLights() {
   return (
@@ -491,19 +447,18 @@ export function SceneLights() {
       <hemisphereLight args={["#4a4a4a", "#050505", 0.45]} />
       <directionalLight
         position={[10, 16, 8]}
-        intensity={1.3}
+        intensity={1.35}
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
-        shadow-camera-left={-30}
-        shadow-camera-right={30}
+        shadow-camera-left={-34}
+        shadow-camera-right={34}
         shadow-camera-top={22}
         shadow-camera-bottom={-12}
         shadow-bias={-0.0005}
       />
-      <directionalLight position={[-8, 6, -4]} intensity={0.35} color="#8a8a8a" />
-      {/* subtle front rim so faces read */}
-      <directionalLight position={[0, 4, 12]} intensity={0.18} color="#a8a8a8" />
+      <directionalLight position={[-8, 6, -4]} intensity={0.38} color="#8a8a8a" />
+      <directionalLight position={[0, 4, 12]} intensity={0.2} color="#a8a8a8" />
     </>
   );
 }

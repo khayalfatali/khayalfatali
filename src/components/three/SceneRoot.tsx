@@ -38,6 +38,7 @@ function Rig({
   pulseRef: React.MutableRefObject<number>;
 }) {
   const cam = useRef<THREE.PerspectiveCamera>(null);
+  const { size } = useThree();
   const target = useRef(new THREE.Vector3(0, LOOK_Y, LOOK_Z));
   const lookTarget = useRef(new THREE.Vector3());
   const posTarget = useRef(new THREE.Vector3());
@@ -45,26 +46,30 @@ function Rig({
   useFrame((state, dt) => {
     if (!cam.current) return;
 
+    const aspect = size.width / Math.max(1, size.height);
+    const portrait = aspect < 1;
+    // Pull camera back on portrait to fit both characters horizontally.
+    const distMul = portrait ? 1 + (1 - aspect) * 0.95 : 1;
+    // Slightly wider fov on portrait so vertical composition breathes.
+    const targetFov = portrait ? 44 : 36;
+
     const p = scrollRef.current;
     const n = STATIONS.length - 1;
     const scaled = Math.min(n, Math.max(0, p * n));
     const i = Math.floor(scaled);
     const f = scaled - i;
-    // cubic easing between stops
     const e = f < 0.5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2;
 
     const ax = STATIONS[i].x;
     const bx = STATIONS[Math.min(n, i + 1)].x;
     const stationX = THREE.MathUtils.lerp(ax, bx, e);
 
-    // Pullback between stations for a breath of wide view
     const pullback = Math.sin(f * Math.PI) * 0.8;
 
-    // Drag orbit
     const dragAng = dragRef.current.x * 0.0018;
     const dragElev = THREE.MathUtils.clamp(dragRef.current.y * 0.0008, -0.18, 0.22);
 
-    const orbitR = CAMERA_BASE_Z + pullback;
+    const orbitR = (CAMERA_BASE_Z + pullback) * distMul;
     const camX = stationX + Math.sin(dragAng) * orbitR;
     const camZ = Math.cos(dragAng) * orbitR;
     const camY =
@@ -84,7 +89,11 @@ function Rig({
     target.current.z = THREE.MathUtils.damp(target.current.z, lookTarget.current.z, 5.5, dt);
     cam.current.lookAt(target.current);
 
-    // Pulse spike near station centers
+    if (Math.abs(cam.current.fov - targetFov) > 0.05) {
+      cam.current.fov = THREE.MathUtils.damp(cam.current.fov, targetFov, 6, dt);
+      cam.current.updateProjectionMatrix();
+    }
+
     const distToStation = Math.min(f, 1 - f);
     const wantPulse = 1 + (1 - distToStation * 4) * 0.9;
     pulseRef.current = THREE.MathUtils.damp(pulseRef.current, Math.max(0.8, wantPulse), 4, dt);
@@ -96,7 +105,7 @@ function Rig({
       makeDefault
       fov={36}
       near={0.1}
-      far={160}
+      far={180}
       position={[0, CAMERA_BASE_Y, CAMERA_BASE_Z]}
     />
   );
