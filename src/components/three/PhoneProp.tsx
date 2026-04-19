@@ -3,11 +3,11 @@
 import * as THREE from "three";
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
+import { RoundedBox } from "@react-three/drei";
 
 /**
- * A low-poly phone held by a character.
- * The screen is a pure-white emissive plane — the only "light" in the scene.
- * `pulse` controls the emissive intensity (driven externally).
+ * Slim modern phone — thin, rounded, elegant. Screen is the only emissive
+ * surface in the scene. `pulse` drives emissive intensity + halo.
  */
 export function PhoneProp({
   position = [0, 0, 0] as [number, number, number],
@@ -21,47 +21,81 @@ export function PhoneProp({
   pulse?: number;
 }) {
   const screenMat = useRef<THREE.MeshStandardMaterial>(null);
+  const haloRef = useRef<THREE.PointLight>(null);
 
   useFrame((_, dt) => {
-    if (!screenMat.current) return;
-    const cur = screenMat.current.emissiveIntensity;
-    screenMat.current.emissiveIntensity = THREE.MathUtils.damp(cur, pulse * 1.8, 6, dt);
+    if (screenMat.current) {
+      const cur = screenMat.current.emissiveIntensity;
+      screenMat.current.emissiveIntensity = THREE.MathUtils.damp(cur, pulse * 2.2, 5, dt);
+    }
+    if (haloRef.current) {
+      haloRef.current.intensity = THREE.MathUtils.damp(haloRef.current.intensity, pulse * 0.7, 5, dt);
+    }
   });
 
   return (
     <group position={position} rotation={rotation} scale={scale}>
-      {/* Bezel */}
-      <mesh castShadow>
-        <boxGeometry args={[0.22, 0.44, 0.02]} />
-        <meshStandardMaterial color="#0a0a0a" roughness={1} flatShading />
-      </mesh>
-      {/* Screen (slightly in front) */}
-      <mesh position={[0, 0, 0.012]}>
-        <planeGeometry args={[0.19, 0.4]} />
+      {/* Body — slim, beveled */}
+      <RoundedBox args={[0.28, 0.56, 0.018]} radius={0.03} smoothness={6} castShadow>
+        <meshPhysicalMaterial
+          color="#0b0b0b"
+          roughness={0.45}
+          metalness={0.25}
+          clearcoat={0.3}
+          clearcoatRoughness={0.5}
+        />
+      </RoundedBox>
+
+      {/* Screen — slightly proud of body */}
+      <RoundedBox
+        args={[0.245, 0.515, 0.005]}
+        radius={0.024}
+        smoothness={6}
+        position={[0, 0, 0.012]}
+      >
         <meshStandardMaterial
           ref={screenMat}
           color="#ffffff"
           emissive="#ffffff"
-          emissiveIntensity={1.6}
-          roughness={0.6}
+          emissiveIntensity={1.9}
+          roughness={0.25}
           metalness={0}
         />
-      </mesh>
-      {/* Tiny screen detail - faint horizontal lines (procedural UI hint) */}
-      {[0.13, 0.06, -0.01, -0.08, -0.15].map((y, i) => (
-        <mesh key={i} position={[0, y, 0.013]}>
-          <planeGeometry args={[0.1, 0.008]} />
-          <meshBasicMaterial color="#000" opacity={0.08 + i * 0.02} transparent />
+      </RoundedBox>
+
+      {/* Dynamic-island hint */}
+      <RoundedBox
+        args={[0.075, 0.022, 0.002]}
+        radius={0.01}
+        smoothness={4}
+        position={[0, 0.225, 0.016]}
+      >
+        <meshStandardMaterial color="#050505" roughness={0.6} />
+      </RoundedBox>
+
+      {/* Faint UI hint bars */}
+      {[0.15, 0.06, -0.03, -0.12].map((y, i) => (
+        <mesh key={i} position={[0, y, 0.0162]}>
+          <planeGeometry args={[0.12 - i * 0.015, 0.006]} />
+          <meshBasicMaterial color="#cfcfcf" transparent opacity={0.18 + i * 0.03} />
         </mesh>
       ))}
-      {/* halo glow */}
-      <pointLight position={[0, 0, 0.1]} intensity={pulse * 0.45} distance={1.6} color="#ffffff" />
+
+      {/* Halo cast by the screen */}
+      <pointLight
+        ref={haloRef}
+        position={[0, 0, 0.18]}
+        intensity={0.6}
+        distance={1.9}
+        decay={2}
+        color="#ffffff"
+      />
     </group>
   );
 }
 
 /**
- * A simple card — bank card or NFC card shape
+ * Premium bank card — slim, matte black, subtle chip + contactless mark.
  */
 export function CardProp({
   position = [0, 0, 0] as [number, number, number],
@@ -74,19 +108,30 @@ export function CardProp({
 }) {
   return (
     <group position={position} rotation={rotation} scale={scale}>
-      <mesh castShadow>
-        <boxGeometry args={[0.32, 0.2, 0.01]} />
-        <meshStandardMaterial color="#1a1a1a" roughness={1} flatShading />
+      <RoundedBox args={[0.36, 0.23, 0.012]} radius={0.018} smoothness={6} castShadow>
+        <meshPhysicalMaterial
+          color="#161616"
+          roughness={0.55}
+          metalness={0.3}
+          clearcoat={0.35}
+          clearcoatRoughness={0.45}
+        />
+      </RoundedBox>
+      <RoundedBox
+        args={[0.06, 0.05, 0.003]}
+        radius={0.006}
+        smoothness={4}
+        position={[-0.09, -0.015, 0.008]}
+      >
+        <meshPhysicalMaterial color="#3a3a3a" roughness={0.35} metalness={0.8} />
+      </RoundedBox>
+      <mesh position={[0.08, 0.04, 0.008]} rotation={[0, 0, Math.PI / 2]}>
+        <ringGeometry args={[0.014, 0.018, 24, 1, 0, Math.PI / 2]} />
+        <meshBasicMaterial color="#858585" side={THREE.DoubleSide} />
       </mesh>
-      {/* Chip */}
-      <mesh position={[-0.08, -0.01, 0.006]}>
-        <boxGeometry args={[0.06, 0.05, 0.002]} />
-        <meshStandardMaterial color="#2a2a2a" roughness={0.7} flatShading />
-      </mesh>
-      {/* NFC hint */}
-      <mesh position={[0.08, 0.03, 0.006]}>
-        <ringGeometry args={[0.015, 0.02, 8]} />
-        <meshBasicMaterial color="#444" />
+      <mesh position={[0.08, 0.04, 0.008]} rotation={[0, 0, Math.PI / 2]}>
+        <ringGeometry args={[0.022, 0.026, 24, 1, 0, Math.PI / 2]} />
+        <meshBasicMaterial color="#6f6f6f" side={THREE.DoubleSide} />
       </mesh>
     </group>
   );

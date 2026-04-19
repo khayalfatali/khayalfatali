@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { RoundedBox } from "@react-three/drei";
 import { Character, WalkingFigure } from "./Character";
 import { PhoneProp, CardProp } from "./PhoneProp";
 import { BillProp, Car, House, PineTree } from "./Environment";
@@ -8,23 +9,16 @@ import { BillProp, Car, House, PineTree } from "./Environment";
 const BODY = "#2a2a2a";
 const BODY_LIGHT = "#3a3a3a";
 const BODY_BRIGHT = "#4a4a4a";
-const EDGE = "#141414";
-
-function M({ color = BODY, flat = true }: { color?: string; flat?: boolean }) {
-  return <meshStandardMaterial color={color} roughness={1} metalness={0} flatShading={flat} />;
-}
+const EDGE = "#131313";
 
 /**
  * ---------------------------------------------------------------------------
- * COFFEE / HERO SCENE  — matches the reference image.
+ * COFFEE / HERO SCENE
  * ---------------------------------------------------------------------------
- * Composition (all world coords, origin at station x=0):
- *   • Merchant in apron at (-0.38, 0, 0.05), gently rotated toward customer.
- *   • Customer at (+0.5, 0, 0.1), turned 3/4 away from camera (we see back +
- *     side of face), extending right arm with a banknote toward the phone.
- *   • Glowing iPhone held at merchant's chest area — single light source.
- *   • Background: wooden house (left), pickup + walking figure (right).
- *   • Midground: three anchor pines forming a triangular silhouette band.
+ * • Merchant in apron at (-0.38, 0, 0.05), gently rotated toward customer.
+ * • Customer at (+0.5, 0, 0.1), turned 3/4 away from camera, right hand
+ *   extended with a banknote toward the merchant's glowing phone.
+ * • Backdrop: wooden house (left), pickup + walking figure (right), pines.
  */
 export function CoffeeStation({
   position = [0, 0, 0] as [number, number, number],
@@ -35,7 +29,6 @@ export function CoffeeStation({
 }) {
   return (
     <group position={position}>
-      {/* Merchant (apron, holding phone) */}
       <Character
         position={[-0.38, 0, 0.05]}
         rotation={0.18}
@@ -47,7 +40,6 @@ export function CoffeeStation({
         skin="#8e8e8e"
         hair="#181818"
       />
-      {/* The glowing phone in merchant's hand (between-them) */}
       <PhoneProp
         position={[-0.08, 1.14, 0.38]}
         rotation={[-0.55, 0.25, 0.1]}
@@ -55,7 +47,6 @@ export function CoffeeStation({
         pulse={pulse * 1.15}
       />
 
-      {/* Customer — 3/4 back to camera, right arm extended with bill */}
       <Character
         position={[0.5, 0, 0.1]}
         rotation={Math.PI - 0.25}
@@ -66,20 +57,12 @@ export function CoffeeStation({
         skin="#7e7e7e"
         hair="#181818"
       />
-      <BillProp
-        position={[0.1, 1.18, 0.3]}
-        rotation={[-0.3, 0.2, 0]}
-        scale={1.15}
-      />
+      <BillProp position={[0.1, 1.18, 0.3]} rotation={[-0.3, 0.2, 0]} scale={1.15} />
 
-      {/* House — left background */}
       <House position={[-6.0, 0, -2.6]} rotation={0.55} scale={1.2} />
-
-      {/* Pickup + walking figure — right background */}
       <Car position={[5.5, 0, -1.3]} rotation={-0.3} scale={1.1} />
       <WalkingFigure position={[4.4, 0, -0.9]} rotation={-0.45} speed={0.3} stride={0.2} />
 
-      {/* Anchor pine trees — the one near-camera-right frames the shot */}
       <PineTree position={[2.9, 0, 2.6]} scale={1.9} rotationY={0.5} tone={0} />
       <PineTree position={[-2.4, 0, -0.6]} scale={1.5} rotationY={0.3} tone={1} />
       <PineTree position={[-4.0, 0, -0.8]} scale={1.3} rotationY={1.1} tone={0} />
@@ -104,23 +87,31 @@ export function ClothingStation({
 }) {
   return (
     <group position={position}>
-      {/* Awning */}
-      <mesh position={[0, 2.8, -1.2]} castShadow>
-        <boxGeometry args={[4.2, 0.16, 2.0]} />
-        <M color={EDGE} />
-      </mesh>
+      <RoundedBox
+        args={[4.2, 0.16, 2.0]}
+        radius={0.04}
+        smoothness={4}
+        position={[0, 2.8, -1.2]}
+        castShadow
+      >
+        <meshStandardMaterial color={EDGE} roughness={0.9} />
+      </RoundedBox>
       {[-1.9, 1.9].map((x, i) => (
-        <mesh key={i} position={[x, 1.4, -0.4]} castShadow>
-          <boxGeometry args={[0.1, 2.8, 0.1]} />
-          <M color={EDGE} />
-        </mesh>
+        <RoundedBox
+          key={i}
+          args={[0.1, 2.8, 0.1]}
+          radius={0.03}
+          smoothness={4}
+          position={[x, 1.4, -0.4]}
+          castShadow
+        >
+          <meshStandardMaterial color={EDGE} roughness={0.9} />
+        </RoundedBox>
       ))}
 
-      {/* Clothing racks on either side */}
       <ClothingRack position={[-1.6, 0, -0.5]} />
       <ClothingRack position={[1.6, 0, -0.5]} rotation={-0.12} />
 
-      {/* Merchant (apron, holds phone) */}
       <Character
         position={[-0.38, 0, 0.05]}
         rotation={0.18}
@@ -138,7 +129,6 @@ export function ClothingStation({
         pulse={pulse * 1.1}
       />
 
-      {/* Customer — offering their own phone (Apple Pay tap) */}
       <Character
         position={[0.5, 0, 0.1]}
         rotation={Math.PI - 0.25}
@@ -155,7 +145,6 @@ export function ClothingStation({
         pulse={pulse * 0.65}
       />
 
-      {/* Bg framing */}
       <PineTree position={[-4.6, 0, -2.8]} scale={1.4} rotationY={0.4} tone={0} />
       <PineTree position={[4.3, 0, -2.4]} scale={1.5} rotationY={1.2} tone={1} />
       <PineTree position={[3.3, 0, 2.6]} scale={1.5} rotationY={0.2} tone={0} />
@@ -172,35 +161,43 @@ function ClothingRack({
   rotation?: number;
 }) {
   const hangers = useMemo(() => {
-    const out: { x: number; w: number }[] = [];
+    const out: { x: number; w: number; shade: string }[] = [];
     for (let i = 0; i < 6; i++) {
-      out.push({ x: -0.5 + i * 0.2, w: 0.16 + ((i * 37) % 7) * 0.01 });
+      out.push({
+        x: -0.5 + i * 0.2,
+        w: 0.16 + ((i * 37) % 7) * 0.01,
+        shade: i % 2 ? BODY : BODY_LIGHT,
+      });
     }
     return out;
   }, []);
   return (
     <group position={position} rotation={[0, rotation, 0]}>
       <mesh position={[-0.65, 1.1, 0]}>
-        <cylinderGeometry args={[0.035, 0.035, 2.2, 8]} />
-        <M color={EDGE} />
+        <cylinderGeometry args={[0.035, 0.035, 2.2, 20]} />
+        <meshStandardMaterial color={EDGE} roughness={0.5} metalness={0.6} />
       </mesh>
       <mesh position={[0.65, 1.1, 0]}>
-        <cylinderGeometry args={[0.035, 0.035, 2.2, 8]} />
-        <M color={EDGE} />
+        <cylinderGeometry args={[0.035, 0.035, 2.2, 20]} />
+        <meshStandardMaterial color={EDGE} roughness={0.5} metalness={0.6} />
       </mesh>
       <mesh position={[0, 2.1, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.025, 0.025, 1.35, 8]} />
-        <M color={EDGE} />
+        <cylinderGeometry args={[0.025, 0.025, 1.35, 20]} />
+        <meshStandardMaterial color={EDGE} roughness={0.4} metalness={0.7} />
       </mesh>
       {hangers.map((h, i) => (
         <group key={i} position={[h.x, 1.5, 0]}>
-          <mesh castShadow>
-            <boxGeometry args={[h.w, 0.85, 0.18]} />
-            <M color={i % 2 ? BODY : BODY_LIGHT} />
-          </mesh>
+          <RoundedBox
+            args={[h.w, 0.85, 0.18]}
+            radius={0.03}
+            smoothness={4}
+            castShadow
+          >
+            <meshStandardMaterial color={h.shade} roughness={0.92} />
+          </RoundedBox>
           <mesh position={[0, 0.55, 0]}>
-            <torusGeometry args={[0.04, 0.008, 6, 10]} />
-            <M color={EDGE} />
+            <torusGeometry args={[0.04, 0.008, 10, 20]} />
+            <meshStandardMaterial color={EDGE} roughness={0.4} metalness={0.6} />
           </mesh>
         </group>
       ))}
@@ -222,25 +219,34 @@ export function FruitStation({
 }) {
   return (
     <group position={position}>
-      {/* Canopy */}
-      <mesh position={[0, 2.9, -0.5]} rotation={[0.14, 0, 0]} castShadow>
-        <boxGeometry args={[3.6, 0.08, 1.9]} />
-        <M color={BODY_LIGHT} />
-      </mesh>
+      <RoundedBox
+        args={[3.6, 0.08, 1.9]}
+        radius={0.03}
+        smoothness={4}
+        position={[0, 2.9, -0.5]}
+        rotation={[0.14, 0, 0]}
+        castShadow
+      >
+        <meshStandardMaterial color={BODY_LIGHT} roughness={0.92} />
+      </RoundedBox>
       {[-1.7, 1.7].map((x, i) => (
-        <mesh key={i} position={[x, 1.5, -0.5]} castShadow>
-          <boxGeometry args={[0.08, 3.0, 0.08]} />
-          <M color={EDGE} />
-        </mesh>
+        <RoundedBox
+          key={i}
+          args={[0.08, 3.0, 0.08]}
+          radius={0.02}
+          smoothness={4}
+          position={[x, 1.5, -0.5]}
+          castShadow
+        >
+          <meshStandardMaterial color={EDGE} roughness={0.9} />
+        </RoundedBox>
       ))}
 
-      {/* Crate stacks — bit offset so the characters still read */}
       <FruitCrate position={[-2.0, 0.2, -0.1]} />
       <FruitCrate position={[-2.0, 0.62, -0.1]} small />
       <FruitCrate position={[2.0, 0.2, -0.1]} />
       <FruitCrate position={[2.0, 0.62, -0.1]} small />
 
-      {/* Merchant */}
       <Character
         position={[-0.38, 0, 0.05]}
         rotation={0.18}
@@ -258,7 +264,6 @@ export function FruitStation({
         pulse={pulse * 1.05}
       />
 
-      {/* Customer offering their phone (Google Pay) */}
       <Character
         position={[0.5, 0, 0.1]}
         rotation={Math.PI - 0.25}
@@ -275,10 +280,8 @@ export function FruitStation({
         pulse={pulse * 0.65}
       />
 
-      {/* Small crate with produce on counter line */}
       <FruitCrate position={[0.05, 0.18, 0.9]} small />
 
-      {/* Trees */}
       <PineTree position={[-4.8, 0, -2.5]} scale={1.5} rotationY={0.4} tone={0} />
       <PineTree position={[4.6, 0, -2.2]} scale={1.4} rotationY={1.0} tone={1} />
       <PineTree position={[-3.4, 0, 2.6]} scale={1.6} rotationY={0.2} tone={0} />
@@ -311,14 +314,23 @@ function FruitCrate({
   const d = small ? 0.45 : 0.6;
   return (
     <group position={position}>
-      <mesh castShadow receiveShadow>
-        <boxGeometry args={[w, 0.22, d]} />
-        <M color={EDGE} />
-      </mesh>
+      <RoundedBox
+        args={[w, 0.22, d]}
+        radius={0.02}
+        smoothness={4}
+        castShadow
+        receiveShadow
+      >
+        <meshStandardMaterial color={EDGE} roughness={0.92} />
+      </RoundedBox>
       {fruits.map((p, i) => (
         <mesh key={i} position={p} castShadow>
-          <icosahedronGeometry args={[0.07, 0]} />
-          <M color={i % 2 ? BODY_BRIGHT : BODY_LIGHT} flat={false} />
+          <sphereGeometry args={[0.07, 16, 12]} />
+          <meshStandardMaterial
+            color={i % 2 ? BODY_BRIGHT : BODY_LIGHT}
+            roughness={0.6}
+            metalness={0.05}
+          />
         </mesh>
       ))}
     </group>
@@ -339,22 +351,24 @@ export function FloristStation({
 }) {
   return (
     <group position={position}>
-      {/* Shop wall */}
-      <mesh position={[0, 1.8, -1.3]} castShadow>
-        <boxGeometry args={[3.6, 3.6, 0.15]} />
-        <M color={BODY} />
-      </mesh>
+      <RoundedBox
+        args={[3.6, 3.6, 0.15]}
+        radius={0.04}
+        smoothness={4}
+        position={[0, 1.8, -1.3]}
+        castShadow
+      >
+        <meshStandardMaterial color={BODY} roughness={0.92} />
+      </RoundedBox>
       <mesh position={[0, 3.7, -1.1]} castShadow>
-        <coneGeometry args={[2.3, 0.9, 4]} />
-        <M color={EDGE} />
+        <coneGeometry args={[2.3, 0.9, 24]} />
+        <meshStandardMaterial color={EDGE} roughness={0.95} />
       </mesh>
 
-      {/* Flower buckets lining the background */}
       {[-1.4, -0.8, 0.8, 1.4].map((x, i) => (
         <FlowerBucket key={i} position={[x, 0, -0.7]} variant={i} />
       ))}
 
-      {/* Merchant */}
       <Character
         position={[-0.38, 0, 0.05]}
         rotation={0.18}
@@ -372,7 +386,6 @@ export function FloristStation({
         pulse={pulse * 1.1}
       />
 
-      {/* Customer — physical card */}
       <Character
         position={[0.5, 0, 0.1]}
         rotation={Math.PI - 0.25}
@@ -384,7 +397,6 @@ export function FloristStation({
       />
       <CardProp position={[0.15, 1.18, 0.3]} rotation={[-0.4, 0.3, 0]} />
 
-      {/* Trees */}
       <PineTree position={[-4.4, 0, -2.6]} scale={1.4} rotationY={0.6} tone={0} />
       <PineTree position={[4.2, 0, -2.0]} scale={1.3} rotationY={-0.4} tone={1} />
       <PineTree position={[3.6, 0, 2.6]} scale={1.5} rotationY={0.2} tone={0} />
@@ -416,18 +428,21 @@ function FlowerBucket({
   return (
     <group position={position}>
       <mesh position={[0, 0.15, 0]} castShadow>
-        <cylinderGeometry args={[0.18, 0.14, 0.3, 8]} />
-        <M color={EDGE} />
+        <cylinderGeometry args={[0.18, 0.14, 0.3, 24]} />
+        <meshStandardMaterial color={EDGE} roughness={0.85} metalness={0.15} />
       </mesh>
       {stems.map((s, i) => (
         <group key={i} position={[s.x, 0.3, s.z]}>
           <mesh position={[0, s.h / 2, 0]}>
-            <cylinderGeometry args={[0.008, 0.008, s.h, 4]} />
-            <M color={EDGE} />
+            <cylinderGeometry args={[0.008, 0.008, s.h, 8]} />
+            <meshStandardMaterial color={EDGE} roughness={0.85} />
           </mesh>
           <mesh position={[0, s.h, 0]} castShadow>
-            <icosahedronGeometry args={[0.055, 0]} />
-            <M color={i % 2 ? BODY_BRIGHT : BODY_LIGHT} flat={false} />
+            <sphereGeometry args={[0.055, 14, 10]} />
+            <meshStandardMaterial
+              color={i % 2 ? BODY_BRIGHT : BODY_LIGHT}
+              roughness={0.7}
+            />
           </mesh>
         </group>
       ))}
@@ -436,29 +451,31 @@ function FlowerBucket({
 }
 
 /**
- * Lights tuned to match the reference: a key from upper-right creating the
- * main character highlight + soft back/rim fill, and the phone itself casting
- * a local white point light on the merchant's chest.
+ * Cinematic three-point lighting: soft top/front key, subtle back/side rim,
+ * low ambient + hemisphere fill. No harsh direct shadows — shadow map is
+ * PCFSoft in SceneRoot.
  */
 export function SceneLights() {
   return (
     <>
-      <ambientLight intensity={0.22} />
+      <ambientLight intensity={0.26} />
       <hemisphereLight args={["#4a4a4a", "#050505", 0.45]} />
       <directionalLight
-        position={[10, 16, 8]}
-        intensity={1.35}
+        position={[6, 14, 6]}
+        intensity={1.1}
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
-        shadow-camera-left={-34}
-        shadow-camera-right={34}
-        shadow-camera-top={22}
-        shadow-camera-bottom={-12}
-        shadow-bias={-0.0005}
+        shadow-camera-left={-12}
+        shadow-camera-right={12}
+        shadow-camera-top={14}
+        shadow-camera-bottom={-4}
+        shadow-bias={-0.0004}
+        shadow-radius={8}
       />
-      <directionalLight position={[-8, 6, -4]} intensity={0.38} color="#8a8a8a" />
-      <directionalLight position={[0, 4, 12]} intensity={0.2} color="#a8a8a8" />
+      <directionalLight position={[-8, 6, -4]} intensity={0.45} color="#8a8a8a" />
+      <directionalLight position={[0, 4, 12]} intensity={0.28} color="#a8a8a8" />
+      <pointLight position={[0, 3.2, 4]} intensity={0.35} color="#ffffff" distance={10} decay={2} />
     </>
   );
 }
