@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef } from "react";
 
 const FEATURES = [
@@ -8,28 +7,22 @@ const FEATURES = [
     kicker: "Accept payments",
     title: "Tap to Pay on iPhone.",
     body:
-      "Turn any iPhone into a contactless terminal. No hardware, no cables. Accept cards, Apple Pay, and Google Pay with a single tap.",
-    src: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1400&h=1600&fit=crop&q=80&auto=format",
-    alt: "Customer tapping a phone to pay at a café counter",
-    caption: "₼28.50 · Tap to Pay",
+      "Turn any iPhone into a contactless terminal. No hardware, no cables. Accept cards, Apple Pay, and Google Pay with a tap.",
+    mockup: "TapToPayMockup" as const,
   },
   {
     kicker: "Run the business",
     title: "Your POS, reimagined.",
     body:
       "Orders, revenue, staff performance, and best-sellers — in one fluid mobile workflow. Every transaction becomes operational intelligence.",
-    src: "https://images.unsplash.com/photo-1604709177595-ee9c3527cb0d?w=1400&h=1600&fit=crop&q=80&auto=format",
-    alt: "Shopkeeper reviewing analytics on a phone behind a counter",
-    caption: "Today · ₼1,284.50",
+    mockup: "DashboardMockup" as const,
   },
   {
     kicker: "Distributed team",
     title: "Every employee, their own terminal.",
     body:
-      "Assign payment acceptance to each staff member on their own iPhone. Faster service, lower cost, zero terminals to manage.",
-    src: "https://images.unsplash.com/photo-1556745753-b2904692b3cd?w=1400&h=1600&fit=crop&q=80&auto=format",
-    alt: "Staff members working together in a modern retail shop",
-    caption: "3 devices · 1 account",
+      "Assign payment acceptance to each staff member on their own iPhone. Faster service, lower cost, zero terminals.",
+    mockup: "MultiDeviceMockup" as const,
   },
 ];
 
@@ -105,45 +98,124 @@ function FeatureBlock({
         </a>
       </div>
       <div className="flex justify-center">
-        <FeatureImage src={feature.src} alt={feature.alt} caption={feature.caption} />
+        <Mockup kind={feature.mockup} />
       </div>
     </div>
   );
 }
 
-function FeatureImage({
-  src,
-  alt,
-  caption,
-}: {
-  src: string;
-  alt: string;
-  caption: string;
-}) {
+function Mockup({ kind }: { kind: "TapToPayMockup" | "DashboardMockup" | "MultiDeviceMockup" }) {
+  if (kind === "TapToPayMockup") return <TapToPayMockup />;
+  if (kind === "DashboardMockup") return <DashboardMockup />;
+  return <MultiDeviceMockup />;
+}
+
+function PhoneFrame({ children }: { children: React.ReactNode }) {
   return (
-    <figure className="group relative aspect-[4/5] w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-[#050505]">
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        sizes="(min-width: 768px) 40vw, 90vw"
-        className="object-cover grayscale transition-[transform,filter] duration-[900ms] group-hover:scale-[1.03] group-hover:grayscale-[0.85]"
-        style={{ transitionTimingFunction: "cubic-bezier(0.22, 0.8, 0.2, 1)" }}
-      />
-      <div
-        aria-hidden
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.2) 55%, rgba(0,0,0,0) 100%)",
-        }}
-      />
-      <figcaption className="absolute bottom-5 left-5 right-5 flex items-center gap-3">
-        <span className="h-1.5 w-1.5 rounded-full bg-[#0071e3] shadow-[0_0_12px_rgba(0,113,227,0.8)]" />
-        <span className="text-[12px] font-medium uppercase tracking-[0.2em] text-white/85">
-          {caption}
-        </span>
-      </figcaption>
-    </figure>
+    <div
+      className="relative aspect-[9/19.5] w-[260px] rounded-[42px] p-[6px] phone-bezel md:w-[300px]"
+    >
+      <div className="relative h-full w-full overflow-hidden rounded-[36px] bg-black">
+        <div className="absolute left-1/2 top-2 z-10 h-6 w-24 -translate-x-1/2 rounded-full bg-black" />
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function TapToPayMockup() {
+  return (
+    <PhoneFrame>
+      <div className="flex h-full w-full flex-col items-center justify-between bg-gradient-to-b from-[#0a0a0a] via-[#0f0f0f] to-black p-6 pt-14">
+        <div className="text-center">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-white/45">Amount due</p>
+          <p className="mt-2 font-serif text-[48px] leading-none text-white">₼28.50</p>
+        </div>
+        <div className="flex w-full flex-col items-center gap-3">
+          <div className="flex h-32 w-32 items-center justify-center rounded-full bg-white/5 ring-1 ring-white/10">
+            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#0071e3]/15 ring-2 ring-[#0071e3]/50">
+              <div className="h-14 w-14 rounded-full bg-[#0071e3]" />
+            </div>
+          </div>
+          <p className="text-[13px] text-white/70">Hold card or phone near top</p>
+        </div>
+        <div className="w-full rounded-xl bg-white/5 py-3 text-center text-[13px] text-white/60 ring-1 ring-white/10">
+          Cancel
+        </div>
+      </div>
+    </PhoneFrame>
+  );
+}
+
+function DashboardMockup() {
+  const bars = [38, 62, 44, 78, 55, 82, 48];
+  return (
+    <PhoneFrame>
+      <div className="flex h-full w-full flex-col gap-4 bg-gradient-to-b from-[#0a0a0a] to-black p-5 pt-14">
+        <div>
+          <p className="text-[11px] uppercase tracking-[0.18em] text-white/45">Today</p>
+          <p className="mt-1 font-serif text-[32px] leading-none text-white">₼1,284.50</p>
+          <p className="mt-1 text-[12px] text-[#4c9dff]">↑ 18% vs. last week</p>
+        </div>
+        <div className="flex h-28 items-end justify-between gap-1 rounded-xl bg-white/[0.03] p-3 ring-1 ring-white/5">
+          {bars.map((h, i) => (
+            <div
+              key={i}
+              className="w-full rounded-sm bg-white/80"
+              style={{ height: `${h}%`, opacity: 0.3 + (h / 100) * 0.7 }}
+            />
+          ))}
+        </div>
+        <div className="flex flex-col gap-2">
+          {[
+            { name: "Americano", v: "32 sold" },
+            { name: "Flat white", v: "24 sold" },
+            { name: "Croissant", v: "18 sold" },
+          ].map((r) => (
+            <div
+              key={r.name}
+              className="flex items-center justify-between rounded-lg bg-white/[0.03] px-3 py-2 ring-1 ring-white/5"
+            >
+              <span className="text-[13px] text-white/85">{r.name}</span>
+              <span className="text-[12px] text-white/50">{r.v}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </PhoneFrame>
+  );
+}
+
+function MultiDeviceMockup() {
+  return (
+    <div className="relative flex items-center">
+      <div className="relative -mr-10 rotate-[-6deg] scale-[0.72] opacity-70">
+        <PhoneFrame>
+          <div className="flex h-full w-full flex-col items-center justify-center bg-black p-6 pt-14">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/45">Aylin · Barista</p>
+            <p className="mt-2 font-serif text-[28px] text-white">₼14.00</p>
+            <div className="mt-4 h-16 w-16 rounded-full bg-[#0071e3]/30 ring-2 ring-[#0071e3]/60" />
+          </div>
+        </PhoneFrame>
+      </div>
+      <div className="relative z-10">
+        <PhoneFrame>
+          <div className="flex h-full w-full flex-col items-center justify-center bg-black p-6 pt-14">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/45">Elnur · Cashier</p>
+            <p className="mt-2 font-serif text-[32px] text-white">₼28.50</p>
+            <div className="mt-4 h-20 w-20 rounded-full bg-[#0071e3]/35 ring-2 ring-[#0071e3]/70" />
+          </div>
+        </PhoneFrame>
+      </div>
+      <div className="relative -ml-10 rotate-[6deg] scale-[0.72] opacity-70">
+        <PhoneFrame>
+          <div className="flex h-full w-full flex-col items-center justify-center bg-black p-6 pt-14">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/45">Leyla · Server</p>
+            <p className="mt-2 font-serif text-[28px] text-white">₼42.80</p>
+            <div className="mt-4 h-16 w-16 rounded-full bg-[#0071e3]/30 ring-2 ring-[#0071e3]/60" />
+          </div>
+        </PhoneFrame>
+      </div>
+    </div>
   );
 }
