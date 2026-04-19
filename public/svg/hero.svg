@@ -1,0 +1,88 @@
+<svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1A1A1A" />
+      <stop offset="100%" stop-color="#050505" />
+    </linearGradient>
+    <linearGradient id="merchantGlow" x1="1" y1="0.5" x2="0" y2="0.5">
+      <stop offset="0%" stop-color="#FFE9B5" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#FFE9B5" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="customerGlow" x1="0" y1="0.5" x2="1" y2="0.5">
+      <stop offset="0%" stop-color="#FFE9B5" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#FFE9B5" stop-opacity="0" />
+    </linearGradient>
+    <radialGradient id="screenLight" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFE9B5" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#FFE9B5" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="900" fill="url(#bgGrad)" />
+
+  <!-- Far Background: Pine Trees -->
+  <path d="M250 650 L300 500 L350 650 Z" fill="#121212" />
+  <path d="M280 670 L340 480 L400 670 Z" fill="#0D0D0D" />
+  <path d="M1000 650 L1050 520 L1100 650 Z" fill="#121212" />
+
+  <!-- Far Background: House Vignette -->
+  <g transform="translate(80, 580)">
+    <path d="M0 100 L0 40 L40 0 L80 40 L80 100 Z" fill="#151515" />
+    <rect x="30" y="60" width="20" height="40" fill="#0A0A0A" />
+  </g>
+
+  <!-- Ground Plane -->
+  <path d="M0 750 L1200 750 L1200 900 L0 900 Z" fill="#080808" />
+
+  <!-- Merchant (Left) -->
+  <g>
+    <!-- Body -->
+    <path d="M320 750 L360 480 L480 480 L520 750 Z" fill="#2A2A2A" />
+    <!-- Apron -->
+    <path d="M370 520 L470 520 L490 750 L350 750 Z" fill="#1F1F1F" />
+    <path d="M400 480 L440 480 L450 520 L390 520 Z" fill="#1F1F1F" />
+    <!-- Head -->
+    <path d="M395 470 L390 400 L420 380 L450 400 L445 470 Z" fill="#333333" />
+    <!-- Arm reaching out -->
+    <path d="M480 550 L580 580 L575 610 L480 590 Z" fill="#3D3D3D" />
+    <!-- Face Highlight -->
+    <path d="M430 400 L450 400 L445 470 L435 460 Z" fill="url(#merchantGlow)" />
+  </g>
+
+  <!-- Customer (Right) -->
+  <g>
+    <!-- Body -->
+    <path d="M720 750 L760 460 L880 460 L920 750 Z" fill="#222222" />
+    <!-- Head -->
+    <path d="M795 450 L790 380 L820 360 L850 380 L845 450 Z" fill="#333333" />
+    <!-- Arm reaching out -->
+    <path d="M760 580 L650 620 L655 650 L760 630 Z" fill="#3D3D3D" />
+    <!-- Hand holding card -->
+    <path d="M650 620 L620 630 L625 655 L655 650 Z" fill="#3D3D3D" />
+    <!-- Bank Card -->
+    <path d="M610 635 L640 625 L645 640 L615 650 Z" fill="#111111" />
+    <!-- Face Highlight -->
+    <path d="M795 450 L790 380 L810 380 L815 450 Z" fill="url(#customerGlow)" />
+  </g>
+
+  <!-- The Phone & Light Source -->
+  <g transform="translate(570, 560) rotate(-10)">
+    <!-- Phone Body -->
+    <rect x="0" y="0" width="50" height="90" rx="4" fill="#111111" />
+    <!-- Glowing Screen -->
+    <rect x="4" y="4" width="42" height="82" rx="2" fill="#FFE9B5" />
+    <!-- Ambient Screen Glow -->
+    <circle cx="25" cy="45" r="120" fill="url(#screenLight)" />
+  </g>
+
+  <!-- Subtle Hand-drawn Detail Lines -->
+  <g stroke="#444" stroke-width="1" fill="none" opacity="0.3">
+    <path d="M370 550 L470 550" />
+    <path d="M380 600 L460 600" />
+    <path d="M780 500 L860 500" />
+  </g>
+
+  <!-- Foreground Glow on Hands -->
+  <circle cx="590" cy="600" r="40" fill="#FFE9B5" opacity="0.2" />
+</svg>
