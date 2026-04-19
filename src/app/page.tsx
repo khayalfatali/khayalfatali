@@ -19,13 +19,21 @@ export default function Home() {
       <SmoothScrollProvider />
       <SceneRoot />
       <Nav />
-      {/* A vignette over the 3D canvas so text stays readable */}
+      {/* Minimal top + bottom fades just for text legibility — leave the 3D clear */}
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 z-[1]"
+        className="pointer-events-none fixed inset-x-0 top-0 z-[1] h-[18vh]"
         style={{
           background:
-            "radial-gradient(120% 80% at 50% 0%, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.25) 40%, rgba(0,0,0,0.55) 75%, rgba(0,0,0,0.75) 100%)",
+            "linear-gradient(to bottom, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 55%, rgba(0,0,0,0) 100%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-[1] h-[30vh]"
+        style={{
+          background:
+            "linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.35) 60%, rgba(0,0,0,0) 100%)",
         }}
       />
       <main className="relative z-[2]">

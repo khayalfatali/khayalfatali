@@ -3,37 +3,28 @@
 import { useMemo } from "react";
 import { Character } from "./Character";
 import { PhoneProp, CardProp } from "./PhoneProp";
+import { BillProp, Car, House, PineTree } from "./Environment";
+import { WalkingFigure } from "./Character";
 
-const BODY = "#1a1a1a";
-const BODY_LIGHT = "#222222";
-const EDGE = "#0a0a0a";
+const BODY = "#2a2a2a";
+const BODY_LIGHT = "#3a3a3a";
+const BODY_BRIGHT = "#4a4a4a";
+const EDGE = "#141414";
 
 function M({ color = BODY, flat = true }: { color?: string; flat?: boolean }) {
   return <meshStandardMaterial color={color} roughness={1} metalness={0} flatShading={flat} />;
 }
 
 /**
- * Each station is a self-contained merchant scene.
- * Positioned by the parent rail.
+ * COFFEE / HERO SCENE
+ *
+ * Matches the reference image:
+ *  - Merchant (with apron) on the left, holding glowing phone slightly forward.
+ *  - Customer on the right, reaching out with cash/bill.
+ *  - Small wooden house in the background (left).
+ *  - Pickup truck with a walking figure heading to it (right).
+ *  - Foreground pine tree just to camera-right, midground trees behind.
  */
-
-function Counter({ width = 2.2, depth = 0.9 }: { width?: number; depth?: number }) {
-  return (
-    <>
-      {/* Counter top */}
-      <mesh position={[0, 0.95, 0]} castShadow receiveShadow>
-        <boxGeometry args={[width, 0.08, depth]} />
-        <M color={BODY_LIGHT} />
-      </mesh>
-      {/* Counter body */}
-      <mesh position={[0, 0.45, 0]} castShadow receiveShadow>
-        <boxGeometry args={[width, 0.9, depth]} />
-        <M color={BODY} />
-      </mesh>
-    </>
-  );
-}
-
 export function CoffeeStation({
   position = [0, 0, 0] as [number, number, number],
   pulse = 1,
@@ -43,57 +34,74 @@ export function CoffeeStation({
 }) {
   return (
     <group position={position}>
-      {/* Back wall / awning */}
-      <mesh position={[0, 2.1, -0.9]} castShadow receiveShadow>
-        <boxGeometry args={[3.4, 2.2, 0.15]} />
-        <M color={BODY} />
-      </mesh>
-      {/* Roof overhang */}
-      <mesh position={[0, 3.1, -0.2]} castShadow>
-        <boxGeometry args={[3.6, 0.15, 1.6]} />
-        <M color={EDGE} />
-      </mesh>
-      {/* Shelf with simple jars */}
-      <mesh position={[0, 2.2, -0.78]}>
-        <boxGeometry args={[2.6, 0.05, 0.25]} />
-        <M color={BODY_LIGHT} />
-      </mesh>
-      {[-0.9, -0.3, 0.3, 0.9].map((x, i) => (
-        <mesh key={i} position={[x, 2.42, -0.78]} castShadow>
-          <cylinderGeometry args={[0.09, 0.1, 0.3, 8]} />
-          <M color={BODY_LIGHT} />
-        </mesh>
-      ))}
-
-      <Counter width={2.6} depth={1.0} />
-
-      {/* Merchant behind counter */}
+      {/* Merchant (apron) */}
       <Character
-        position={[-0.3, 0, -0.1]}
-        rotation={Math.PI}
+        position={[-0.55, 0, 0]}
+        rotation={0.45}
         handForward="right"
+        otherHand="pocket"
         variant={1}
+        apron
+        shirt="#6a6a6a"
+        pants="#2a2a2a"
+        skin="#8e8e8e"
+        hair="#181818"
       />
-      {/* Merchant phone (extended forward across the counter) */}
+      {/* Glowing phone in merchant's hand */}
       <PhoneProp
-        position={[-0.1, 1.1, 0.35]}
-        rotation={[-0.2, Math.PI, 0]}
-        pulse={pulse}
+        position={[-0.15, 1.1, 0.55]}
+        rotation={[-0.45, 0.35, 0]}
+        scale={1.15}
+        pulse={pulse * 1.1}
       />
 
-      {/* Customer in front */}
+      {/* Customer (darker jacket, lighter tone — looking at merchant) */}
       <Character
-        position={[0.4, 0, 1.7]}
-        rotation={0}
-        handForward="right"
+        position={[0.85, 0, 0.6]}
+        rotation={-Math.PI + 0.35}
+        handForward="left"
+        extendForward
         variant={2}
-        tone="light"
+        shirt="#3d3d3d"
+        pants="#222"
+        skin="#7a7a7a"
+        hair="#1a1a1a"
       />
-      <CardProp position={[0.65, 1.15, 1.0]} rotation={[-0.3, 0, 0]} />
+      {/* Customer extending a bill toward the phone */}
+      <BillProp
+        position={[0.35, 1.15, 0.55]}
+        rotation={[-0.35, -0.25, 0]}
+        scale={1.2}
+      />
+
+      {/* House in left background */}
+      <House position={[-6.2, 0, -2.4]} rotation={0.45} scale={1.15} />
+
+      {/* Pickup truck on right background with walking figure */}
+      <Car position={[5.8, 0, -1.6]} rotation={-0.2} scale={1.1} />
+      <WalkingFigure
+        position={[5.0, 0, -1.2]}
+        rotation={-0.3}
+        speed={0.3}
+        stride={0.2}
+      />
+
+      {/* Large foreground pine tree (camera-right corner) */}
+      <PineTree position={[2.8, 0, 2.4]} scale={1.8} rotationY={0.6} tone={0} />
+      {/* Backdrop pine clusters */}
+      <PineTree position={[-2.8, 0, -1.0]} scale={1.4} rotationY={0.3} tone={1} />
+      <PineTree position={[-4.0, 0, -0.4]} scale={1.2} rotationY={1.2} tone={0} />
+      <PineTree position={[3.5, 0, -2.5]} scale={1.3} rotationY={-0.4} tone={1} />
+      <PineTree position={[-0.4, 0, -3.0]} scale={1.1} rotationY={0.8} tone={0} />
     </group>
   );
 }
 
+/**
+ * CLOTHING STATION
+ *  - Outdoor market stall w/ rack of clothes.
+ *  - Merchant accepting payment via customer's Apple Pay phone.
+ */
 export function ClothingStation({
   position = [0, 0, 0] as [number, number, number],
   pulse = 1,
@@ -103,40 +111,67 @@ export function ClothingStation({
 }) {
   return (
     <group position={position}>
-      {/* Back wall */}
-      <mesh position={[0, 1.6, -0.9]} castShadow receiveShadow>
-        <boxGeometry args={[3.6, 3.2, 0.1]} />
-        <M color={BODY} />
+      {/* Back awning / stall frame */}
+      <mesh position={[0, 2.6, -1.4]} castShadow>
+        <boxGeometry args={[3.8, 0.15, 1.8]} />
+        <M color={EDGE} />
       </mesh>
-      {/* Clothing rack */}
-      <ClothingRack position={[-1.2, 0, -0.5]} />
-      <ClothingRack position={[1.2, 0, -0.5]} rotation={-0.15} />
+      {/* Awning posts */}
+      {[-1.7, 1.7].map((x, i) => (
+        <mesh key={i} position={[x, 1.3, -0.6]} castShadow>
+          <boxGeometry args={[0.08, 2.6, 0.08]} />
+          <M color={EDGE} />
+        </mesh>
+      ))}
 
-      <Counter width={1.8} depth={0.8} />
+      {/* Racks */}
+      <ClothingRack position={[-1.3, 0, -0.9]} />
+      <ClothingRack position={[1.2, 0, -0.9]} rotation={-0.2} />
 
-      {/* Merchant */}
-      <Character position={[-0.1, 0, -0.15]} rotation={Math.PI} handForward="right" variant={3} />
-      {/* Merchant phone */}
+      {/* Counter */}
+      <Counter width={1.8} depth={0.7} />
+
+      {/* Merchant behind counter */}
+      <Character
+        position={[-0.25, 0, -0.25]}
+        rotation={Math.PI + 0.1}
+        handForward="right"
+        otherHand="pocket"
+        apron
+        variant={3}
+        shirt="#606060"
+        pants="#262626"
+        skin="#8a8a8a"
+      />
       <PhoneProp
-        position={[0.05, 1.1, 0.3]}
-        rotation={[-0.2, Math.PI, 0]}
+        position={[0.1, 1.12, 0.4]}
+        rotation={[-0.35, Math.PI - 0.15, 0]}
+        scale={1.05}
         pulse={pulse}
       />
 
-      {/* Customer paying with their own phone (Apple Pay) */}
+      {/* Customer with Apple Pay phone */}
       <Character
-        position={[0.55, 0, 1.7]}
-        rotation={0}
+        position={[0.6, 0, 1.4]}
+        rotation={0.15}
         handForward="right"
+        extendForward
         variant={4}
-        tone="light"
+        shirt="#3a3a3a"
+        pants="#1f1f1f"
+        skin="#7c7c7c"
       />
       <PhoneProp
-        position={[0.8, 1.15, 0.95]}
-        rotation={[-0.35, 0, 0]}
-        scale={0.9}
-        pulse={pulse * 0.7}
+        position={[0.85, 1.15, 0.7]}
+        rotation={[-0.55, 0.2, 0]}
+        scale={0.95}
+        pulse={pulse * 0.75}
       />
+
+      {/* Environment accents */}
+      <PineTree position={[-4.5, 0, -3.2]} scale={1.3} rotationY={0.4} tone={0} />
+      <PineTree position={[4.5, 0, -2.8]} scale={1.5} rotationY={1.2} tone={1} />
+      <PineTree position={[3.2, 0, 2.6]} scale={1.4} rotationY={0.2} tone={0} />
     </group>
   );
 }
@@ -148,7 +183,6 @@ function ClothingRack({
   position: [number, number, number];
   rotation?: number;
 }) {
-  // rack: two vertical posts + horizontal bar + row of hangers
   const hangers = useMemo(() => {
     const out: { x: number; w: number }[] = [];
     for (let i = 0; i < 6; i++) {
@@ -158,7 +192,6 @@ function ClothingRack({
   }, []);
   return (
     <group position={position} rotation={[0, rotation, 0]}>
-      {/* posts */}
       <mesh position={[-0.65, 1.1, 0]}>
         <cylinderGeometry args={[0.035, 0.035, 2.2, 8]} />
         <M color={EDGE} />
@@ -167,19 +200,16 @@ function ClothingRack({
         <cylinderGeometry args={[0.035, 0.035, 2.2, 8]} />
         <M color={EDGE} />
       </mesh>
-      {/* horizontal bar */}
       <mesh position={[0, 2.1, 0]} rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[0.025, 0.025, 1.35, 8]} />
         <M color={EDGE} />
       </mesh>
-      {/* clothing items as flat shapes */}
       {hangers.map((h, i) => (
         <group key={i} position={[h.x, 1.5, 0]}>
           <mesh castShadow>
             <boxGeometry args={[h.w, 0.85, 0.18]} />
             <M color={i % 2 ? BODY : BODY_LIGHT} />
           </mesh>
-          {/* hanger hook */}
           <mesh position={[0, 0.55, 0]}>
             <torusGeometry args={[0.04, 0.008, 6, 10]} />
             <M color={EDGE} />
@@ -190,6 +220,24 @@ function ClothingRack({
   );
 }
 
+function Counter({ width = 2.2, depth = 0.9 }: { width?: number; depth?: number }) {
+  return (
+    <>
+      <mesh position={[0, 0.95, 0]} castShadow receiveShadow>
+        <boxGeometry args={[width, 0.08, depth]} />
+        <M color={BODY_LIGHT} />
+      </mesh>
+      <mesh position={[0, 0.45, 0]} castShadow receiveShadow>
+        <boxGeometry args={[width, 0.9, depth]} />
+        <M color={BODY} />
+      </mesh>
+    </>
+  );
+}
+
+/**
+ * FRUIT STAND — outdoor crates.
+ */
 export function FruitStation({
   position = [0, 0, 0] as [number, number, number],
   pulse = 1,
@@ -199,47 +247,66 @@ export function FruitStation({
 }) {
   return (
     <group position={position}>
-      {/* Back wall */}
-      <mesh position={[0, 1.7, -0.9]} castShadow receiveShadow>
-        <boxGeometry args={[3.6, 3.4, 0.1]} />
-        <M color={BODY} />
-      </mesh>
-      {/* Striped awning */}
-      <mesh position={[0, 3.1, 0.2]} rotation={[0.18, 0, 0]} castShadow>
-        <boxGeometry args={[3.4, 0.08, 1.4]} />
+      {/* Stall canopy */}
+      <mesh position={[0, 2.8, -0.3]} rotation={[0.18, 0, 0]} castShadow>
+        <boxGeometry args={[3.4, 0.08, 1.8]} />
         <M color={BODY_LIGHT} />
       </mesh>
-      {/* Stacked crates */}
-      <FruitCrate position={[-0.9, 0.2, 0.15]} />
-      <FruitCrate position={[0.0, 0.2, 0.15]} />
-      <FruitCrate position={[0.9, 0.2, 0.15]} />
-      <FruitCrate position={[-0.45, 0.62, 0.15]} small />
-      <FruitCrate position={[0.45, 0.62, 0.15]} small />
-      {/* Counter narrow */}
-      <Counter width={2.4} depth={0.4} />
+      {[-1.5, 1.5].map((x, i) => (
+        <mesh key={i} position={[x, 1.4, -0.3]} castShadow>
+          <boxGeometry args={[0.08, 2.8, 0.08]} />
+          <M color={EDGE} />
+        </mesh>
+      ))}
 
-      {/* Merchant */}
-      <Character position={[-0.2, 0, -0.2]} rotation={Math.PI} handForward="right" variant={5} />
+      {/* Crate stacks */}
+      <FruitCrate position={[-0.9, 0.2, 0.0]} />
+      <FruitCrate position={[0.0, 0.2, 0.0]} />
+      <FruitCrate position={[0.9, 0.2, 0.0]} />
+      <FruitCrate position={[-0.45, 0.62, 0.0]} small />
+      <FruitCrate position={[0.45, 0.62, 0.0]} small />
+
+      {/* Merchant leaning from the back */}
+      <Character
+        position={[-0.3, 0, -0.9]}
+        rotation={Math.PI - 0.1}
+        handForward="right"
+        otherHand="pocket"
+        apron
+        variant={5}
+        shirt="#5a5a5a"
+        pants="#242424"
+        skin="#8a8a8a"
+      />
       <PhoneProp
-        position={[0.0, 1.05, 0.35]}
-        rotation={[-0.25, Math.PI, 0]}
+        position={[-0.05, 1.1, -0.35]}
+        rotation={[-0.35, Math.PI, 0]}
+        scale={1.1}
         pulse={pulse}
       />
 
       {/* Customer with Google Pay phone */}
       <Character
-        position={[0.55, 0, 1.6]}
-        rotation={0}
+        position={[0.7, 0, 1.4]}
+        rotation={0.1}
         handForward="right"
+        extendForward
         variant={6}
-        tone="light"
+        shirt="#3c3c3c"
+        pants="#1e1e1e"
+        skin="#7a7a7a"
       />
       <PhoneProp
-        position={[0.8, 1.1, 0.9]}
-        rotation={[-0.3, 0, 0]}
-        scale={0.9}
-        pulse={pulse * 0.7}
+        position={[0.9, 1.1, 0.7]}
+        rotation={[-0.5, 0.1, 0]}
+        scale={0.95}
+        pulse={pulse * 0.75}
       />
+
+      {/* Trees */}
+      <PineTree position={[-4.8, 0, -2.5]} scale={1.5} rotationY={0.4} tone={0} />
+      <PineTree position={[4.6, 0, -2.2]} scale={1.4} rotationY={1.0} tone={1} />
+      <PineTree position={[-3.2, 0, 2.4]} scale={1.6} rotationY={0.2} tone={0} />
     </group>
   );
 }
@@ -276,13 +343,16 @@ function FruitCrate({
       {fruits.map((p, i) => (
         <mesh key={i} position={p} castShadow>
           <icosahedronGeometry args={[0.07, 0]} />
-          <M color={i % 2 ? BODY_LIGHT : BODY} flat={false} />
+          <M color={i % 2 ? BODY_BRIGHT : BODY_LIGHT} flat={false} />
         </mesh>
       ))}
     </group>
   );
 }
 
+/**
+ * FLORIST — small indoor setup w/ flower buckets.
+ */
 export function FloristStation({
   position = [0, 0, 0] as [number, number, number],
   pulse = 1,
@@ -292,30 +362,56 @@ export function FloristStation({
 }) {
   return (
     <group position={position}>
-      {/* Back wall */}
-      <mesh position={[0, 1.6, -0.9]} castShadow receiveShadow>
-        <boxGeometry args={[3.6, 3.2, 0.1]} />
+      {/* Small shop silhouette */}
+      <mesh position={[0, 1.8, -1.3]} castShadow>
+        <boxGeometry args={[3.6, 3.6, 0.15]} />
         <M color={BODY} />
       </mesh>
-      {/* Flower buckets lining the back */}
-      {[-1.2, -0.6, 0.6, 1.2].map((x, i) => (
-        <FlowerBucket key={i} position={[x, 0, -0.3]} variant={i} />
-      ))}
-      <Counter width={2.2} depth={0.8} />
-      {/* Wrapped bouquet on counter */}
-      <Bouquet position={[-0.4, 1.0, 0]} />
+      <mesh position={[0, 3.7, -1.0]} castShadow>
+        <coneGeometry args={[2.3, 0.9, 4]} />
+        <M color={EDGE} />
+      </mesh>
 
-      {/* Merchant */}
-      <Character position={[0.3, 0, -0.15]} rotation={Math.PI} handForward="right" variant={7} />
+      {[-1.2, -0.6, 0.6, 1.2].map((x, i) => (
+        <FlowerBucket key={i} position={[x, 0, -0.6]} variant={i} />
+      ))}
+
+      <Counter width={2.2} depth={0.7} />
+      <Bouquet position={[-0.4, 1.0, 0.05]} />
+
+      <Character
+        position={[0.3, 0, -0.2]}
+        rotation={Math.PI + 0.08}
+        handForward="right"
+        otherHand="pocket"
+        apron
+        variant={7}
+        shirt="#606060"
+        pants="#242424"
+        skin="#8c8c8c"
+      />
       <PhoneProp
-        position={[0.5, 1.1, 0.35]}
-        rotation={[-0.2, Math.PI, 0]}
+        position={[0.55, 1.12, 0.4]}
+        rotation={[-0.3, Math.PI - 0.1, 0]}
+        scale={1.1}
         pulse={pulse}
       />
 
-      {/* Customer */}
-      <Character position={[0.6, 0, 1.6]} rotation={0} handForward="right" variant={8} tone="light" />
-      <CardProp position={[0.85, 1.15, 0.95]} rotation={[-0.3, 0, 0]} />
+      <Character
+        position={[0.55, 0, 1.3]}
+        rotation={0.1}
+        handForward="right"
+        extendForward
+        variant={8}
+        shirt="#3e3e3e"
+        pants="#1d1d1d"
+        skin="#7a7a7a"
+      />
+      <CardProp position={[0.85, 1.18, 0.65]} rotation={[-0.5, 0.1, 0]} />
+
+      <PineTree position={[-4.5, 0, -2.6]} scale={1.4} rotationY={0.6} tone={0} />
+      <PineTree position={[4.2, 0, -2.0]} scale={1.3} rotationY={-0.4} tone={1} />
+      <PineTree position={[3.6, 0, 2.6]} scale={1.5} rotationY={0.2} tone={0} />
     </group>
   );
 }
@@ -342,12 +438,10 @@ function FlowerBucket({
   }, [variant]);
   return (
     <group position={position}>
-      {/* bucket */}
       <mesh position={[0, 0.15, 0]} castShadow>
         <cylinderGeometry args={[0.18, 0.14, 0.3, 8]} />
         <M color={EDGE} />
       </mesh>
-      {/* stems + blooms */}
       {stems.map((s, i) => (
         <group key={i} position={[s.x, 0.3, s.z]}>
           <mesh position={[0, s.h / 2, 0]}>
@@ -356,7 +450,7 @@ function FlowerBucket({
           </mesh>
           <mesh position={[0, s.h, 0]} castShadow>
             <icosahedronGeometry args={[0.055, 0]} />
-            <M color={i % 2 ? BODY_LIGHT : BODY} flat={false} />
+            <M color={i % 2 ? BODY_BRIGHT : BODY_LIGHT} flat={false} />
           </mesh>
         </group>
       ))}
@@ -379,66 +473,37 @@ function Bouquet({ position }: { position: [number, number, number] }) {
       ].map((p, i) => (
         <mesh key={i} position={p as [number, number, number]} castShadow>
           <icosahedronGeometry args={[0.05, 0]} />
-          <M color={BODY} flat={false} />
+          <M color={BODY_BRIGHT} flat={false} />
         </mesh>
       ))}
     </group>
   );
 }
 
-/** Shared low-poly props */
-
-export function GroundPlane() {
-  return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow position={[0, 0, 0]}>
-      <planeGeometry args={[200, 60]} />
-      <meshStandardMaterial color="#050505" roughness={1} metalness={0} />
-    </mesh>
-  );
-}
-
+/**
+ * Lights tuned for the reference: soft warm key from upper-right, weak fill,
+ * near-black ambient.
+ */
 export function SceneLights() {
   return (
     <>
-      <ambientLight intensity={0.08} />
-      <hemisphereLight args={["#151515", "#000", 0.25]} />
+      <ambientLight intensity={0.22} />
+      <hemisphereLight args={["#4a4a4a", "#050505", 0.45]} />
       <directionalLight
-        position={[8, 14, 6]}
-        intensity={0.55}
+        position={[10, 16, 8]}
+        intensity={1.3}
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
         shadow-camera-left={-30}
         shadow-camera-right={30}
-        shadow-camera-top={20}
-        shadow-camera-bottom={-10}
+        shadow-camera-top={22}
+        shadow-camera-bottom={-12}
+        shadow-bias={-0.0005}
       />
-      <directionalLight position={[-6, 4, -2]} intensity={0.12} />
+      <directionalLight position={[-8, 6, -4]} intensity={0.35} color="#8a8a8a" />
+      {/* subtle front rim so faces read */}
+      <directionalLight position={[0, 4, 12]} intensity={0.18} color="#a8a8a8" />
     </>
-  );
-}
-
-export function TreeSimple({
-  position,
-  scale = 1,
-}: {
-  position: [number, number, number];
-  scale?: number;
-}) {
-  return (
-    <group position={position} scale={scale}>
-      <mesh position={[0, 0.12, 0]}>
-        <cylinderGeometry args={[0.1, 0.14, 0.24, 6]} />
-        <M color={EDGE} />
-      </mesh>
-      <mesh position={[0, 0.8, 0]} castShadow>
-        <coneGeometry args={[0.55, 1.4, 6]} />
-        <M color={BODY} />
-      </mesh>
-      <mesh position={[0, 1.5, 0]} castShadow>
-        <coneGeometry args={[0.4, 1.0, 6]} />
-        <M color={BODY_LIGHT} />
-      </mesh>
-    </group>
   );
 }
