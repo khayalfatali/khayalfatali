@@ -6,7 +6,12 @@ import { SmoothScrollProvider } from "@/components/Smooth";
 import { HeroOverlay } from "@/components/sections/HeroOverlay";
 import { StoryOverlay } from "@/components/sections/StoryOverlay";
 import { ExplanationOverlay } from "@/components/sections/ExplanationOverlay";
+import { Industries } from "@/components/sections/Industries";
+import { Products } from "@/components/sections/Products";
+import { Stats } from "@/components/sections/Stats";
+import { Pricing } from "@/components/sections/Pricing";
 import { Closing } from "@/components/sections/Closing";
+import { Footer } from "@/components/sections/Footer";
 
 const SceneRoot = dynamic(
   () => import("@/components/three/SceneRoot").then((m) => m.SceneRoot),
@@ -37,6 +42,7 @@ export default function Home() {
         }}
       />
       <main className="relative z-[2]">
+        {/* Cinematic scroll-story — preserved exactly as before */}
         <HeroOverlay />
         <section id="story">
           <StoryOverlay />
@@ -44,7 +50,17 @@ export default function Home() {
         <section id="system">
           <ExplanationOverlay />
         </section>
+
+        {/* Square-style marketing structure — solid sections mask the 3D scene below */}
+        <Industries />
+        <Products />
+        <Stats />
+        <Pricing />
+
+        {/* Closing CTA stays transparent to keep the final cinematic note */}
         <Closing />
+
+        <Footer />
       </main>
     </div>
   );
