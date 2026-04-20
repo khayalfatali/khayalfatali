@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Instrument_Serif } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -8,22 +8,15 @@ const inter = Inter({
   display: "swap",
 });
 
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-serif",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "Yeri — Run your entire business from your phone.",
+  title: "Yeri — Merchant infrastructure, redesigned for mobile.",
   description:
-    "Yeri is a mobile-first merchant platform. Accept payments with Tap to Pay on iPhone, manage your business, and grow — all in one app. Built for Azerbaijan and beyond.",
+    "Yeri is a mobile-first merchant acceptance and operations platform. Accept payments, run the business, in one place.",
   metadataBase: new URL("https://yeri.app"),
   openGraph: {
-    title: "Yeri — Run your entire business from your phone.",
+    title: "Yeri — Merchant infrastructure, redesigned for mobile.",
     description:
-      "Accept payments with Tap to Pay on iPhone. Run your business. All in one app.",
+      "Accept payments. Run the business. In one place. Built for the next generation of merchant operations.",
     type: "website",
   },
 };
@@ -32,8 +25,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${instrumentSerif.variable} h-full antialiased`}>
-      <body className="min-h-full bg-black text-[#f5f5f7]">{children}</body>
+    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+      <body className="min-h-full bg-black text-[#f5f5f7] grain">{children}</body>
     </html>
   );
 }
