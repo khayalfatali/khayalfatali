@@ -458,11 +458,11 @@ function FlowerBucket({
 export function SceneLights() {
   return (
     <>
-      <ambientLight intensity={0.26} />
-      <hemisphereLight args={["#4a4a4a", "#050505", 0.45]} />
+      <ambientLight intensity={0.14} />
+      <hemisphereLight args={["#3a3a3a", "#020202", 0.22]} />
       <directionalLight
         position={[6, 14, 6]}
-        intensity={1.1}
+        intensity={0.7}
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
@@ -473,9 +473,9 @@ export function SceneLights() {
         shadow-bias={-0.0004}
         shadow-radius={8}
       />
-      <directionalLight position={[-8, 6, -4]} intensity={0.45} color="#8a8a8a" />
-      <directionalLight position={[0, 4, 12]} intensity={0.28} color="#a8a8a8" />
-      <pointLight position={[0, 3.2, 4]} intensity={0.35} color="#ffffff" distance={10} decay={2} />
+      <directionalLight position={[-8, 6, -4]} intensity={0.22} color="#7a7a7a" />
+      <directionalLight position={[0, 4, 12]} intensity={0.14} color="#888888" />
+      <pointLight position={[0, 3.2, 4]} intensity={0.2} color="#ffffff" distance={10} decay={2} />
     </>
   );
 }

@@ -207,7 +207,7 @@ export function SceneRoot() {
     <div
       data-scene-root
       className="fixed inset-0 z-0 touch-none select-none"
-      style={{ cursor: "grab", background: "#050505" }}
+      style={{ cursor: "grab", background: "#020202" }}
     >
       <Canvas
         shadows
@@ -215,12 +215,12 @@ export function SceneRoot() {
         gl={{ antialias: true, powerPreference: "high-performance", alpha: false }}
         onCreated={({ gl }) => {
           gl.toneMapping = THREE.ACESFilmicToneMapping;
-          gl.toneMappingExposure = 1.15;
+          gl.toneMappingExposure = 0.6;
           gl.outputColorSpace = THREE.SRGBColorSpace;
         }}
       >
-        <color attach="background" args={["#050505"]} />
-        <fog attach="fog" args={["#050505", 16, 55]} />
+        <color attach="background" args={["#020202"]} />
+        <fog attach="fog" args={["#020202", 14, 48]} />
         <AutoResize />
         <Suspense fallback={null}>
           <Rig scrollRef={scrollRef} dragRef={dragRef} pulseRef={pulseRef} />
