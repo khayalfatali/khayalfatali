@@ -6,6 +6,8 @@ import { SmoothScrollProvider } from "@/components/Smooth";
 import { HeroOverlay } from "@/components/sections/HeroOverlay";
 import { StoryOverlay } from "@/components/sections/StoryOverlay";
 import { ExplanationOverlay } from "@/components/sections/ExplanationOverlay";
+import { Pillars } from "@/components/sections/Pillars";
+import { AppShowcase } from "@/components/sections/AppShowcase";
 import { Industries } from "@/components/sections/Industries";
 import { Products } from "@/components/sections/Products";
 import { Stats } from "@/components/sections/Stats";
@@ -52,6 +54,8 @@ export default function Home() {
         </section>
 
         {/* Square-style marketing structure — solid sections mask the 3D scene below */}
+        <Pillars />
+        <AppShowcase />
         <Industries />
         <Products />
         <Stats />

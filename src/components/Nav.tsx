@@ -23,10 +23,10 @@ export function Nav() {
           <span className="tracking-tight">Yeri</span>
         </div>
         <nav className="hidden items-center gap-5 text-white/50 md:flex">
+          <a className="transition-colors hover:text-white" href="#industries">Business types</a>
           <a className="transition-colors hover:text-white" href="#products">Products</a>
-          <a className="transition-colors hover:text-white" href="#industries">Industries</a>
+          <a className="transition-colors hover:text-white" href="#app">App</a>
           <a className="transition-colors hover:text-white" href="#pricing">Pricing</a>
-          <a className="transition-colors hover:text-white" href="#system">System</a>
         </nav>
         <div className="ml-1 flex items-center gap-1.5">
           <a

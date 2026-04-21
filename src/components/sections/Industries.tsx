@@ -2,26 +2,34 @@
 
 import { motion } from "framer-motion";
 
-const INDUSTRIES = [
+const TYPES = [
   {
-    label: "Cafés",
-    kicker: "Coffee · Bakery · Kiosks",
-    body: "Tap-first service with no cash drawer, no extra hardware.",
+    label: "Food & Drink",
+    kicker: "Cafés · Restaurants · Bars · Bakeries",
+    body:
+      "Tap-first service at the counter, in the aisle, or at the table — no cash drawer, no waiting on hardware.",
+    sub: ["Coffee shops", "Quick service", "Full service", "Bars & breweries", "Food trucks", "Bakeries"],
   },
   {
     label: "Retail",
-    kicker: "Apparel · Electronics · Boutiques",
-    body: "Mobile checkout on the floor. Close the sale where the customer is.",
+    kicker: "Clothing · Grocery · Home · Boutiques",
+    body:
+      "Mobile checkout on the floor. Close the sale where the customer is — with inventory and best-sellers in the same app.",
+    sub: ["Clothing", "Home & gift", "Wine & liquor", "Grocery", "Garden"],
+  },
+  {
+    label: "Beauty & Wellness",
+    kicker: "Salons · Barbershops · Spas",
+    body:
+      "Take payment at the chair, not the counter. Bookings, reminders, and repeat-client recognition, all in one flow.",
+    sub: ["Beauty salon", "Nail salon", "Hair salon", "Day spa", "Barbershop", "Tattoo & piercing"],
   },
   {
     label: "Services",
-    kicker: "Beauty · Repair · Hospitality",
-    body: "Accept payment wherever the service happens — chair-side, room-side, on-site.",
-  },
-  {
-    label: "Markets",
-    kicker: "Florists · Fruit · Grocers",
-    body: "Outdoor-ready, cable-free acceptance. One phone is the whole stall.",
+    kicker: "Hospitality · Repair · Markets · Pro services",
+    body:
+      "Accept payment wherever the service happens — on-site, roadside, outdoors. Cable-free, waterproof-grade readiness.",
+    sub: ["Home services", "Automotive", "Transportation", "Professional services", "Markets & florists", "Recreation"],
   },
 ];
 
@@ -41,7 +49,7 @@ export function Industries() {
           className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-white/55"
         >
           <span className="h-1 w-1 rounded-full bg-white/80" />
-          Built for every merchant
+          Business types
         </motion.div>
 
         <motion.h2
@@ -60,9 +68,9 @@ export function Industries() {
         </p>
 
         <div className="mt-16 grid gap-[1px] bg-white/10 md:grid-cols-2">
-          {INDUSTRIES.map((ind, i) => (
+          {TYPES.map((t, i) => (
             <motion.div
-              key={ind.label}
+              key={t.label}
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-15%" }}
@@ -73,18 +81,28 @@ export function Industries() {
               }}
               className="group relative flex flex-col overflow-hidden bg-black"
             >
-              <IndustryScene index={i} label={ind.label} />
-              <div className="flex flex-col gap-3 p-8 md:p-10">
+              <IndustryScene index={i} label={t.label} />
+              <div className="flex flex-col gap-4 p-8 md:p-10">
                 <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-white/45">
                   <span className="h-1 w-1 rounded-full bg-white/70" />
-                  0{i + 1} · {ind.kicker}
+                  0{i + 1} · {t.kicker}
                 </div>
                 <h3 className="text-[28px] font-semibold leading-[1.04] tracking-[-0.03em] text-white md:text-[34px]">
-                  {ind.label}
+                  {t.label}
                 </h3>
                 <p className="max-w-md text-[14px] leading-[1.6] text-white/55">
-                  {ind.body}
+                  {t.body}
                 </p>
+                <ul className="mt-2 flex flex-wrap gap-1.5">
+                  {t.sub.map((s) => (
+                    <li
+                      key={s}
+                      className="rounded-full border border-white/10 bg-white/[0.02] px-2.5 py-1 text-[11px] text-white/60"
+                    >
+                      {s}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </motion.div>
           ))}
@@ -95,17 +113,15 @@ export function Industries() {
 }
 
 /**
- * Per-industry "3D-render-like" scene built from pure CSS/SVG in the
- * monochrome DNA of the site. No photos, no low-poly look — the scenes use
- * layered gradients, soft shadows, and silhouette marks to read as premium
- * editorial imagery.
+ * Per-industry editorial scene built from pure CSS/SVG in the monochrome
+ * DNA of the site. Four variants — Food & Drink, Retail, Beauty, Services.
  */
 function IndustryScene({ index, label }: { index: number; label: string }) {
   const wrap =
     "relative aspect-[16/10] w-full overflow-hidden border-b border-white/[0.06] bg-gradient-to-b from-[#0d0d0d] via-[#060606] to-black";
 
   if (index === 0) {
-    // Café — rising steam over a warm spotlit cup silhouette
+    // Food & Drink — warm-lit cup + rising steam
     return (
       <div className={wrap}>
         <div
@@ -130,7 +146,6 @@ function IndustryScene({ index, label }: { index: number; label: string }) {
               <stop offset="1" stopColor="rgba(255,255,255,0)" />
             </linearGradient>
           </defs>
-          {/* steam */}
           <path
             d="M180 90 C 175 60, 200 50, 195 20 M200 95 C 208 68, 186 58, 200 30 M220 92 C 225 70, 210 58, 220 32"
             stroke="url(#steam)"
@@ -138,21 +153,17 @@ function IndustryScene({ index, label }: { index: number; label: string }) {
             fill="none"
             strokeLinecap="round"
           />
-          {/* saucer */}
           <ellipse cx="200" cy="205" rx="120" ry="10" fill="#1a1a1a" />
-          {/* cup */}
           <path
             d="M150 120 L250 120 L242 195 Q200 210 158 195 Z"
             fill="url(#cup)"
           />
-          {/* handle */}
           <path
             d="M250 135 C 280 135, 280 175, 250 175"
             stroke="#8a8a8a"
             strokeWidth="6"
             fill="none"
           />
-          {/* coffee surface */}
           <ellipse cx="200" cy="122" rx="50" ry="5" fill="#2a2a2a" />
         </svg>
         <SceneLabel label={label} meta="₼4.50 · Tap to pay" />
@@ -161,7 +172,7 @@ function IndustryScene({ index, label }: { index: number; label: string }) {
   }
 
   if (index === 1) {
-    // Retail — hanging garments on a rail, soft rim light
+    // Retail — garments on a rail, soft rim light
     return (
       <div className={wrap}>
         <div
@@ -182,11 +193,9 @@ function IndustryScene({ index, label }: { index: number; label: string }) {
               <stop offset="1" stopColor="#101010" />
             </linearGradient>
           </defs>
-          {/* rail */}
           <line x1="40" y1="50" x2="360" y2="50" stroke="#555" strokeWidth="3" />
           <line x1="40" y1="50" x2="40" y2="30" stroke="#555" strokeWidth="3" />
           <line x1="360" y1="50" x2="360" y2="30" stroke="#555" strokeWidth="3" />
-          {/* garments */}
           {[80, 150, 220, 290].map((x, i) => (
             <g key={i}>
               <circle cx={x} cy="58" r="4" fill="#888" />
@@ -204,7 +213,7 @@ function IndustryScene({ index, label }: { index: number; label: string }) {
   }
 
   if (index === 2) {
-    // Services — salon chair / scissors silhouette, single spotlight
+    // Beauty — salon chair + hovering iPhone terminal
     return (
       <div className={wrap}>
         <div
@@ -225,22 +234,14 @@ function IndustryScene({ index, label }: { index: number; label: string }) {
               <stop offset="1" stopColor="#0a0a0a" />
             </linearGradient>
           </defs>
-          {/* floor */}
           <ellipse cx="220" cy="225" rx="160" ry="8" fill="#111" />
-          {/* chair base */}
           <rect x="205" y="210" width="30" height="8" fill="#333" />
           <rect x="215" y="160" width="10" height="55" fill="#333" />
-          {/* seat */}
-          <path
-            d="M170 160 L270 160 L260 180 L180 180 Z"
-            fill="url(#chair)"
-          />
-          {/* back */}
+          <path d="M170 160 L270 160 L260 180 L180 180 Z" fill="url(#chair)" />
           <path
             d="M175 160 L175 90 Q 220 75 265 90 L265 160 Z"
             fill="url(#chair)"
           />
-          {/* rim light */}
           <path
             d="M175 92 Q 220 76 265 92"
             stroke="#d9d9d9"
@@ -248,7 +249,6 @@ function IndustryScene({ index, label }: { index: number; label: string }) {
             fill="none"
             opacity="0.6"
           />
-          {/* hovering iPhone terminal */}
           <g transform="translate(310 90)">
             <rect
               x="0"
@@ -275,19 +275,19 @@ function IndustryScene({ index, label }: { index: number; label: string }) {
             </text>
           </g>
         </svg>
-        <SceneLabel label={label} meta="On-location service" />
+        <SceneLabel label={label} meta="Chair-side charge" />
       </div>
     );
   }
 
-  // Markets — fruit stack / flower silhouette lit from above
+  // Services — toolbox / wrench silhouette under a single spotlight
   return (
     <div className={wrap}>
       <div
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(55% 50% at 50% 15%, rgba(255,255,255,0.09) 0%, rgba(0,0,0,0) 70%)",
+            "radial-gradient(55% 50% at 50% 20%, rgba(255,255,255,0.09) 0%, rgba(0,0,0,0) 70%)",
         }}
       />
       <svg
@@ -296,62 +296,36 @@ function IndustryScene({ index, label }: { index: number; label: string }) {
         preserveAspectRatio="xMidYMid slice"
       >
         <defs>
-          <radialGradient id="fruit" cx="0.35" cy="0.35" r="0.7">
-            <stop offset="0" stopColor="#c8c8c8" />
+          <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#7a7a7a" />
             <stop offset="1" stopColor="#1a1a1a" />
-          </radialGradient>
+          </linearGradient>
+          <linearGradient id="box" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#2f2f2f" />
+            <stop offset="1" stopColor="#0a0a0a" />
+          </linearGradient>
         </defs>
-        {/* crate */}
-        <path
-          d="M70 210 L330 210 L310 160 L90 160 Z"
-          fill="#0e0e0e"
-          stroke="#2a2a2a"
-          strokeWidth="1.5"
-        />
-        <line x1="100" y1="185" x2="300" y2="185" stroke="#2a2a2a" />
-        {/* fruit stack */}
-        {[
-          [140, 150, 22],
-          [185, 148, 24],
-          [230, 150, 22],
-          [275, 152, 20],
-          [165, 125, 20],
-          [210, 124, 22],
-          [255, 127, 20],
-          [190, 102, 20],
-          [230, 103, 20],
-          [210, 82, 19],
-        ].map(([x, y, r], i) => (
-          <circle
-            key={i}
-            cx={x}
-            cy={y}
-            r={r}
-            fill="url(#fruit)"
-            opacity={0.92 - i * 0.03}
-          />
-        ))}
-        {/* price tag */}
-        <g transform="translate(315 150)">
+        {/* floor shadow */}
+        <ellipse cx="200" cy="225" rx="160" ry="6" fill="#111" />
+        {/* wrench */}
+        <g transform="translate(80 100) rotate(-20)">
           <path
-            d="M0 0 L30 0 L40 12 L30 24 L0 24 Z"
-            fill="#f5f5f5"
+            d="M0 20 L120 20 L120 14 L140 14 Q 150 14 150 24 Q 150 34 140 34 L120 34 L120 28 L0 28 Z"
+            fill="url(#metal)"
           />
-          <circle cx="4" cy="12" r="1.5" fill="#0a0a0a" />
-          <text
-            x="20"
-            y="16"
-            textAnchor="middle"
-            fill="#0a0a0a"
-            fontSize="9"
-            fontFamily="system-ui"
-            fontWeight="700"
-          >
-            ₼2.80
-          </text>
+          <circle cx="6" cy="24" r="10" fill="none" stroke="#7a7a7a" strokeWidth="4" />
+          <circle cx="6" cy="24" r="3" fill="#0a0a0a" />
+        </g>
+        {/* toolbox */}
+        <g transform="translate(220 110)">
+          <rect x="0" y="20" width="140" height="80" rx="6" fill="url(#box)" />
+          <rect x="20" y="30" width="100" height="60" rx="3" fill="#141414" />
+          <rect x="30" y="0" width="80" height="20" rx="4" fill="#1a1a1a" />
+          <rect x="55" y="-8" width="30" height="8" rx="2" fill="#2a2a2a" />
+          <circle cx="70" cy="60" r="4" fill="#2a2a2a" />
         </g>
       </svg>
-      <SceneLabel label={label} meta="Open-air stall" />
+      <SceneLabel label={label} meta="On-site payment" />
     </div>
   );
 }
