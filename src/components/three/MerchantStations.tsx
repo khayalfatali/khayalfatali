@@ -451,31 +451,63 @@ function FlowerBucket({
 }
 
 /**
- * Cinematic three-point lighting: soft top/front key, subtle back/side rim,
- * low ambient + hemisphere fill. No harsh direct shadows — shadow map is
- * PCFSoft in SceneRoot.
+ * Studio lighting: bright top-front key with soft shadows, neutral fill,
+ * subtle back-rim to catch silhouettes, and a top hemisphere wash. Paired
+ * with <Environment> HDR + <SoftShadows> + <ContactShadows> in SceneRoot
+ * for a clean clay-render feel.
  */
 export function SceneLights() {
   return (
     <>
-      <ambientLight intensity={0.14} />
-      <hemisphereLight args={["#3a3a3a", "#020202", 0.22]} />
+      <ambientLight intensity={0.3} color="#dcdcdc" />
+      <hemisphereLight args={["#e6e4df", "#17171a", 0.55]} />
+
+      {/* Key light — warm-neutral, casts the main shadow */}
       <directionalLight
         position={[6, 14, 6]}
-        intensity={0.7}
+        intensity={1.55}
+        color="#f3efe8"
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
-        shadow-camera-left={-12}
-        shadow-camera-right={12}
-        shadow-camera-top={14}
+        shadow-camera-left={-14}
+        shadow-camera-right={14}
+        shadow-camera-top={16}
         shadow-camera-bottom={-4}
         shadow-bias={-0.0004}
-        shadow-radius={8}
+        shadow-normalBias={0.04}
+        shadow-radius={10}
       />
-      <directionalLight position={[-8, 6, -4]} intensity={0.22} color="#7a7a7a" />
-      <directionalLight position={[0, 4, 12]} intensity={0.14} color="#888888" />
-      <pointLight position={[0, 3.2, 4]} intensity={0.2} color="#ffffff" distance={10} decay={2} />
+
+      {/* Fill from the opposite side — cool neutral, no shadow */}
+      <directionalLight
+        position={[-9, 5, -2]}
+        intensity={0.55}
+        color="#c4c9d0"
+      />
+
+      {/* Camera-side soft fill so faces don't crush */}
+      <directionalLight
+        position={[0, 3.2, 10]}
+        intensity={0.28}
+        color="#e8e8e8"
+      />
+
+      {/* Back-rim so silhouettes separate from the fog */}
+      <directionalLight
+        position={[2, 6, -10]}
+        intensity={0.6}
+        color="#ece4d6"
+      />
+
+      {/* Subject accent — localized pop on the merchant phone area */}
+      <pointLight
+        position={[0, 3.2, 4]}
+        intensity={0.45}
+        color="#ffffff"
+        distance={9}
+        decay={2}
+      />
     </>
   );
 }

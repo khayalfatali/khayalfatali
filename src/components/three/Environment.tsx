@@ -331,13 +331,14 @@ export function BillProp({
 }
 
 /**
- * Ground — matte, very dark. A soft horizon line is painted via fog.
+ * Ground — matte neutral clay. A soft horizon line is painted via fog.
+ * Slightly warm-neutral so ContactShadows grade softly into it.
  */
 export function Ground() {
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow position={[0, 0, 0]}>
       <planeGeometry args={[500, 260]} />
-      <meshStandardMaterial color="#0a0a0a" roughness={1} metalness={0} />
+      <meshStandardMaterial color="#161618" roughness={0.98} metalness={0} />
     </mesh>
   );
 }

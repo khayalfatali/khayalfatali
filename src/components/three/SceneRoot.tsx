@@ -1,7 +1,20 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { PerspectiveCamera } from "@react-three/drei";
+import {
+  PerspectiveCamera,
+  Environment,
+  SoftShadows,
+  ContactShadows,
+} from "@react-three/drei";
+import {
+  EffectComposer,
+  Bloom,
+  DepthOfField,
+  Vignette,
+  Noise,
+} from "@react-three/postprocessing";
+import { BlendFunction } from "postprocessing";
 import { Suspense, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import {
@@ -48,9 +61,7 @@ function Rig({
 
     const aspect = size.width / Math.max(1, size.height);
     const portrait = aspect < 1;
-    // Pull camera back on portrait to fit both characters horizontally.
     const distMul = portrait ? 1 + (1 - aspect) * 0.95 : 1;
-    // Slightly wider fov on portrait so vertical composition breathes.
     const targetFov = portrait ? 44 : 36;
 
     const p = scrollRef.current;
@@ -120,6 +131,27 @@ function AutoResize() {
     return () => window.removeEventListener("resize", onResize);
   }, [gl]);
   return null;
+}
+
+function Post() {
+  return (
+    <EffectComposer multisampling={0} enableNormalPass={false}>
+      <Bloom
+        intensity={0.4}
+        luminanceThreshold={0.72}
+        luminanceSmoothing={0.22}
+        mipmapBlur
+      />
+      <DepthOfField
+        focusDistance={0.012}
+        focalLength={0.028}
+        bokehScale={2.6}
+        height={480}
+      />
+      <Vignette eskil={false} offset={0.28} darkness={0.55} />
+      <Noise premultiply blendFunction={BlendFunction.SCREEN} opacity={0.1} />
+    </EffectComposer>
+  );
 }
 
 export function SceneRoot() {
@@ -207,7 +239,7 @@ export function SceneRoot() {
     <div
       data-scene-root
       className="fixed inset-0 z-0 touch-none select-none"
-      style={{ cursor: "grab", background: "#020202" }}
+      style={{ cursor: "grab", background: "#111113" }}
     >
       <Canvas
         shadows
@@ -215,22 +247,39 @@ export function SceneRoot() {
         gl={{ antialias: true, powerPreference: "high-performance", alpha: false }}
         onCreated={({ gl }) => {
           gl.toneMapping = THREE.ACESFilmicToneMapping;
-          gl.toneMappingExposure = 0.6;
+          gl.toneMappingExposure = 1.0;
           gl.outputColorSpace = THREE.SRGBColorSpace;
         }}
       >
-        <color attach="background" args={["#020202"]} />
-        <fog attach="fog" args={["#020202", 14, 48]} />
+        <color attach="background" args={["#111113"]} />
+        <fog attach="fog" args={["#111113", 20, 64]} />
         <AutoResize />
+        <SoftShadows size={18} samples={12} focus={0.85} />
         <Suspense fallback={null}>
-          <Rig scrollRef={scrollRef} dragRef={dragRef} pulseRef={pulseRef} />
+          <Rig
+            scrollRef={scrollRef}
+            dragRef={dragRef}
+            pulseRef={pulseRef}
+          />
+          <Environment preset="apartment" environmentIntensity={0.55} />
+
           <SceneLights />
           <Ground />
+          <ContactShadows
+            position={[0, 0.01, 0.2]}
+            opacity={0.55}
+            scale={60}
+            blur={2.4}
+            far={3}
+            resolution={1024}
+            color="#000000"
+          />
           <Forest />
           <CoffeeStation position={[STATIONS[0].x, 0, 0]} pulse={pulse} />
           <ClothingStation position={[STATIONS[1].x, 0, 0]} pulse={pulse} />
           <FruitStation position={[STATIONS[2].x, 0, 0]} pulse={pulse} />
           <FloristStation position={[STATIONS[3].x, 0, 0]} pulse={pulse} />
+          <Post />
         </Suspense>
       </Canvas>
     </div>
