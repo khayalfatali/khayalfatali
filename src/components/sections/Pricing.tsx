@@ -58,7 +58,7 @@ export function Pricing() {
               <span className="ml-2 text-[15px] text-white/55">per transaction</span>
             </div>
             <a
-              href="#cta"
+              href="#get-started"
               className="mb-10 w-fit rounded-full bg-white px-5 py-3 text-[13.5px] font-semibold text-black transition-transform hover:scale-[1.03]"
             >
               Sign up free
