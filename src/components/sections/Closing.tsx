@@ -6,7 +6,7 @@ import { YeriMark } from "../Nav";
 export function Closing() {
   return (
     <section
-      id="cta"
+      id="get-started"
       className="relative flex min-h-[100svh] items-center justify-center overflow-hidden"
     >
       <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[1200px] flex-col items-center justify-center px-6 text-center">
@@ -28,11 +28,11 @@ export function Closing() {
           transition={{ duration: 1, ease: [0.22, 0.8, 0.2, 1] }}
           className="text-balance text-[14vw] font-semibold leading-[0.92] tracking-[-0.045em] text-white sm:text-[9vw] lg:text-[6.8vw]"
         >
-          Accept payments.
+          The merchant
           <br />
-          Run the business.
+          operating system.
           <br />
-          <span className="text-white/35">In one place.</span>
+          <span className="text-white/35">Built for what&apos;s next.</span>
         </motion.h2>
 
         <motion.div
